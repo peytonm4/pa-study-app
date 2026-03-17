@@ -1,6 +1,6 @@
 # PA Study App
 
-**STATUS: QUESTIONING IN PROGRESS** - Resume with `/gsd:new-project`
+**STATUS: ACTIVE**
 
 ## What This Is
 
@@ -109,10 +109,13 @@ PA curriculum structure:
 **Key insight from users:**
 Concept maps (from NotebookLLM) are popular for studying systems/algorithms. Students want these tied to specific objectives.
 
-**Workflow (NEEDS CLARIFICATION - questioning paused here):**
+**Workflow:**
 - User creates module → uploads PPTX/PDF → pastes objectives → hits "Generate"
 - App indexes sources, maps chunks to objectives, generates study materials
-- Student studies via... (TBD: objective answer pages? flashcards? study flow mode? need to clarify actual study session workflow)
+- Student chooses their mode:
+  - **Reference mode**: Browse objective answer pages like study notes — read answers, flashcards, concept maps at their own pace
+  - **Study session mode**: Structured guided flow — 30-60s preview → 5-10 flashcards → 3-question quiz → mark done
+- Both modes are available; student picks based on how they want to study that night
 
 ## Constraints
 
@@ -148,4 +151,4 @@ Concept maps (from NotebookLLM) are popular for studying systems/algorithms. Stu
 - Any other must-have features not in the detailed spec?
 
 ---
-*Last updated: 2026-01-29 during initial questioning (IN PROGRESS)*
+*Last updated: 2026-03-16 after questioning complete*
