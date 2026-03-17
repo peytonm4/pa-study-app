@@ -111,44 +111,44 @@
 | INFRA-07 | Phase 1 | Pending |
 | AUTH-01 | Phase 1 | Pending |
 | AUTH-02 | Phase 1 | Pending |
-| INGEST-01 | TBD | Pending |
-| INGEST-02 | TBD | Pending |
-| INGEST-03 | TBD | Pending |
-| INGEST-04 | TBD | Pending |
-| INGEST-05 | TBD | Pending |
-| INGEST-06 | TBD | Pending |
-| INGEST-07 | TBD | Pending |
-| OBJ-01 | TBD | Pending |
-| OBJ-02 | TBD | Pending |
-| OBJ-03 | TBD | Pending |
-| OBJ-04 | TBD | Pending |
-| FIG-01 | TBD | Pending |
-| FIG-02 | TBD | Pending |
-| FIG-03 | TBD | Pending |
-| FIG-04 | TBD | Pending |
-| FIG-05 | TBD | Pending |
-| GEN-01 | TBD | Pending |
-| GEN-02 | TBD | Pending |
-| GEN-03 | TBD | Pending |
-| GEN-04 | TBD | Pending |
-| GEN-05 | TBD | Pending |
-| GEN-06 | TBD | Pending |
-| GEN-07 | TBD | Pending |
-| GEN-08 | TBD | Pending |
-| LLM-01 | TBD | Pending |
-| LLM-02 | TBD | Pending |
-| LLM-03 | TBD | Pending |
-| STUDY-01 | TBD | Pending |
-| STUDY-02 | TBD | Pending |
-| STUDY-03 | TBD | Pending |
-| STUDY-04 | TBD | Pending |
-| STUDY-05 | TBD | Pending |
+| INGEST-01 | Phase 2 | Pending |
+| INGEST-02 | Phase 2 | Pending |
+| INGEST-03 | Phase 2 | Pending |
+| INGEST-04 | Phase 2 | Pending |
+| INGEST-05 | Phase 2 | Pending |
+| INGEST-06 | Phase 2 | Pending |
+| INGEST-07 | Phase 2 | Pending |
+| LLM-01 | Phase 2 | Pending |
+| LLM-02 | Phase 2 | Pending |
+| LLM-03 | Phase 2 | Pending |
+| OBJ-01 | Phase 3 | Pending |
+| OBJ-02 | Phase 3 | Pending |
+| OBJ-03 | Phase 3 | Pending |
+| OBJ-04 | Phase 3 | Pending |
+| FIG-01 | Phase 3 | Pending |
+| FIG-02 | Phase 3 | Pending |
+| FIG-03 | Phase 3 | Pending |
+| FIG-04 | Phase 3 | Pending |
+| FIG-05 | Phase 3 | Pending |
+| GEN-01 | Phase 4 | Pending |
+| GEN-02 | Phase 4 | Pending |
+| GEN-03 | Phase 4 | Pending |
+| GEN-04 | Phase 4 | Pending |
+| GEN-05 | Phase 4 | Pending |
+| GEN-06 | Phase 4 | Pending |
+| GEN-07 | Phase 4 | Pending |
+| GEN-08 | Phase 4 | Pending |
+| STUDY-01 | Phase 5 | Pending |
+| STUDY-02 | Phase 5 | Pending |
+| STUDY-03 | Phase 5 | Pending |
+| STUDY-04 | Phase 5 | Pending |
+| STUDY-05 | Phase 5 | Pending |
 
 **Coverage:**
-- v1 requirements: 38 total
-- Mapped to phases: TBD (roadmapper will fill this)
-- Unmapped: 38 ⚠️
+- v1 requirements: 41 total
+- Mapped to phases: 41/41 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-16*
-*Last updated: 2026-03-16 after initial definition*
+*Last updated: 2026-03-16 after roadmap created*
