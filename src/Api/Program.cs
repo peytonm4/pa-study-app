@@ -69,6 +69,10 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseHangfireDashboard("/hangfire");  // http://localhost:5000/hangfire in dev
+// Hangfire dashboard — local requests only, no login required in dev
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new Hangfire.Dashboard.LocalRequestsOnlyAuthorizationFilter() }
+});
 
 app.Run();
