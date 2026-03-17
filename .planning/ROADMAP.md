@@ -30,7 +30,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The React frontend loads in a browser and can reach the API
   4. A developer can send requests with X-Dev-UserId header and the API treats them as authenticated
   5. EF Core migrations run successfully against the local Postgres instance
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Docker Compose infra (Postgres + MinIO) and repo foundation
+- [ ] 01-02-PLAN.md — .NET solution scaffold: StudyApp.Api + StudyApp.Worker projects with NuGet packages
+- [ ] 01-03-PLAN.md — React + Vite frontend scaffold with Axios, React Query, shadcn/ui, app shell
+- [ ] 01-04-PLAN.md — API core wiring: DevAuthHandler (TDD), AppDbContext, EF migration, Program.cs
+- [ ] 01-05-PLAN.md — Full-stack smoke test and human verification checkpoint
 
 ### Phase 2: Document Ingestion
 **Goal**: User can upload PPTX and PDF files and the app produces indexed, searchable chunks
@@ -85,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/5 | Not started | - |
 | 2. Document Ingestion | 0/TBD | Not started | - |
 | 3. Objectives and Figures | 0/TBD | Not started | - |
 | 4. Content Generation | 0/TBD | Not started | - |
