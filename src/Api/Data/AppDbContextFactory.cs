@@ -9,7 +9,7 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     public AppDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=studyapp;Username=studyapp;Password=studyapp");
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=studyapp;Username=studyapp;Password=studyapp");
         return new AppDbContext(optionsBuilder.Options);
     }
 }

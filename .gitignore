@@ -6,6 +6,7 @@ obj/
 .vs/
 appsettings.Development.json
 appsettings.*.json
+!appsettings.Development.example.json
 
 # Frontend
 node_modules/
