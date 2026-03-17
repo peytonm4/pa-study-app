@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-03-PLAN.md (Frontend scaffold)
-last_updated: "2026-03-17T16:54:30.371Z"
+stopped_at: Completed 01-04-PLAN.md (API wiring)
+last_updated: "2026-03-17T17:06:50.703Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P02 | 7 | 2 tasks | 11 files |
 | Phase 01-foundation P01 | 7 | 2 tasks | 3 files |
 | Phase 01-foundation P03 | 9min | 2 tasks | 15 files |
+| Phase 01-foundation P04 | 25min | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: appsettings.*.json gitignored broadly; appsettings.Development.example.json deferred to plan 04
 - [Phase 01-foundation]: Tailwind CSS v4 with @tailwindcss/vite plugin (CSS-based config, no tailwind.config.js); shadcn/ui New York style with Geist font
 - [Phase 01-foundation]: Downgraded Vite 8 to Vite 6 for @tailwindcss/vite peer dep compatibility
+- [Phase 01-foundation]: Docker Postgres mapped to host port 5433 (not 5432) due to system PostgreSQL 16 occupying 5432
+- [Phase 01-foundation]: AppDbContextFactory added for EF design-time tooling so migrations can be generated before Program.cs wiring
+- [Phase 01-foundation]: Microsoft.AspNetCore.Mvc.Testing 10.0.5 used for test infrastructure (legacy 2.x Authentication meta-package avoided)
 
 ### Pending Todos
 
@@ -82,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T16:54:30.366Z
-Stopped at: Completed 01-03-PLAN.md (Frontend scaffold)
+Last session: 2026-03-17T17:06:50.700Z
+Stopped at: Completed 01-04-PLAN.md (API wiring)
 Resume file: None

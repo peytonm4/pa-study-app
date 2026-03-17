@@ -11,14 +11,14 @@
 - [x] **INFRA-02**: .NET 8 ASP.NET Core Web API serves as backend
 - [x] **INFRA-03**: .NET 8 Worker Service handles background processing jobs
 - [x] **INFRA-04**: React + Vite + TypeScript frontend communicates with API
-- [ ] **INFRA-05**: Hangfire job queue (Postgres-backed) schedules and tracks processing jobs
-- [ ] **INFRA-06**: S3-compatible storage (MinIO locally, AWS S3/Cloudflare R2 in prod) stores uploaded files
-- [ ] **INFRA-07**: PostgreSQL with EF Core migrations manages all relational data
+- [x] **INFRA-05**: Hangfire job queue (Postgres-backed) schedules and tracks processing jobs
+- [x] **INFRA-06**: S3-compatible storage (MinIO locally, AWS S3/Cloudflare R2 in prod) stores uploaded files
+- [x] **INFRA-07**: PostgreSQL with EF Core migrations manages all relational data
 
 ### Auth
 
-- [ ] **AUTH-01**: Developer can authenticate via X-Dev-UserId header (Guid) in local dev
-- [ ] **AUTH-02**: Seeded DevUser exists for local development without login flow
+- [x] **AUTH-01**: Developer can authenticate via X-Dev-UserId header (Guid) in local dev
+- [x] **AUTH-02**: Seeded DevUser exists for local development without login flow
 
 ### Document Ingestion
 
@@ -106,11 +106,11 @@
 | INFRA-02 | Phase 1 | Complete |
 | INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Complete |
-| INFRA-05 | Phase 1 | Pending |
-| INFRA-06 | Phase 1 | Pending |
-| INFRA-07 | Phase 1 | Pending |
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
+| INFRA-05 | Phase 1 | Complete |
+| INFRA-06 | Phase 1 | Complete |
+| INFRA-07 | Phase 1 | Complete |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
 | INGEST-01 | Phase 2 | Pending |
 | INGEST-02 | Phase 2 | Pending |
 | INGEST-03 | Phase 2 | Pending |
