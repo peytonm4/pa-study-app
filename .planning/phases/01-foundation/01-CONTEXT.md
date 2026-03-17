@@ -37,11 +37,31 @@ Scaffold the complete runnable local stack: .NET 8 API + Worker Service, React f
 - Frontend: `VITE_API_URL` in `.env.local` (gitignored); `.env` committed with default value `http://localhost:5000`
 - Both `.env.example` and `appsettings.Development.example.json` committed to repo — new dev copies and runs
 
+### Frontend UI library
+- Tailwind CSS + shadcn/ui (built on Radix UI primitives)
+- shadcn/ui components installed as-needed per phase — not all at once
+
+### Frontend app shell
+- React Router v6 for routing
+- Phase 1 delivers a minimal shell: root layout with basic nav/sidebar placeholder + one placeholder page at `/`
+- Proves routing works and gives later phases a real place to add pages
+
+### Initial EF Core migration
+- Migration name: `InitialCreate` — creates a `Users` table (Id Guid, plus any minimal fields needed)
+- One seeded DevUser row with a fixed well-known Guid: `00000000-0000-0000-0000-000000000001`
+- Seed via EF `HasData` — documented in README
+
+### API response conventions
+- Raw DTOs/records serialized to JSON — no envelope wrapper
+- Errors use ASP.NET Core `ProblemDetails` (RFC 7807)
+- Frontend axios client handles ProblemDetails errors via an interceptor
+
 ### Claude's Discretion
 - Exact port assignments for API, Worker health endpoint, and frontend dev server
 - README structure and content
 - Docker Compose service names and volume names
 - Hangfire dashboard configuration (enable/disable in dev)
+- Exact Users table schema beyond Id
 
 </decisions>
 
