@@ -8,8 +8,8 @@
 ### Infrastructure
 
 - [ ] **INFRA-01**: Developer can run app locally with Docker Compose (Postgres + MinIO) without paid API keys
-- [ ] **INFRA-02**: .NET 8 ASP.NET Core Web API serves as backend
-- [ ] **INFRA-03**: .NET 8 Worker Service handles background processing jobs
+- [x] **INFRA-02**: .NET 8 ASP.NET Core Web API serves as backend
+- [x] **INFRA-03**: .NET 8 Worker Service handles background processing jobs
 - [ ] **INFRA-04**: React + Vite + TypeScript frontend communicates with API
 - [ ] **INFRA-05**: Hangfire job queue (Postgres-backed) schedules and tracks processing jobs
 - [ ] **INFRA-06**: S3-compatible storage (MinIO locally, AWS S3/Cloudflare R2 in prod) stores uploaded files
@@ -103,8 +103,8 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
+| INFRA-02 | Phase 1 | Complete |
+| INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Pending |
 | INFRA-05 | Phase 1 | Pending |
 | INFRA-06 | Phase 1 | Pending |
