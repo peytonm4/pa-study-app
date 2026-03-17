@@ -12,7 +12,7 @@ Five phases that build the app from runnable skeleton to a complete study tool. 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Runnable local stack with dev auth and all infrastructure wired up
+- [x] **Phase 1: Foundation** - Runnable local stack with dev auth and all infrastructure wired up (completed 2026-03-17)
 - [ ] **Phase 2: Document Ingestion** - PPTX and PDF sources uploaded, processed, and chunked with LLM providers wired
 - [ ] **Phase 3: Objectives and Figures** - User input pipeline complete (objectives pasted + figures reviewed)
 - [ ] **Phase 4: Content Generation** - Grounded study materials generated for every objective
@@ -92,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 4/5 | In Progress|  |
+| 1. Foundation | 5/5 | Complete   | 2026-03-17 |
 | 2. Document Ingestion | 0/TBD | Not started | - |
 | 3. Objectives and Figures | 0/TBD | Not started | - |
 | 4. Content Generation | 0/TBD | Not started | - |
