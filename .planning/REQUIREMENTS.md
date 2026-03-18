@@ -32,18 +32,18 @@
 
 ### Figure Handling
 
-- [ ] **FIG-01**: App extracts figures (images) from PPTX slides and PDFs using the lecture extractor Python skill (`extract_images.py`)
+- [x] **FIG-01**: App extracts figures (images) from PPTX slides and PDFs using the lecture extractor Python skill (`extract_images.py`)
 - [ ] **FIG-02**: App filters out logos, watermarks, template backgrounds, stock photos, and repeated elements automatically (handled by extraction script heuristics)
-- [ ] **FIG-03**: App pre-selects figures that have associated captions or labels (Figure, Table, Algorithm, Flowchart) as Keep
-- [ ] **FIG-04**: User can review detected figures and toggle Keep/Ignore for each before lecture extraction runs
+- [x] **FIG-03**: App pre-selects figures that have associated captions or labels (Figure, Table, Algorithm, Flowchart) as Keep
+- [x] **FIG-04**: User can review detected figures and toggle Keep/Ignore for each before lecture extraction runs
 - [ ] **FIG-05**: App extracts captions for kept figures via vision model (Gemini)
 
 ### Lecture Extraction
 
-- [ ] **LEXT-01**: After figure review, user can trigger lecture extraction for a module
+- [x] **LEXT-01**: After figure review, user can trigger lecture extraction for a module
 - [ ] **LEXT-02**: App calls the lecture extractor Python skill as a subprocess, passing the curated figure list
 - [ ] **LEXT-03**: Lecture extractor reorganizes scattered lecture content into a coherent topic hierarchy (H1/H2/H3 sections), embedding kept figures at appropriate locations
-- [ ] **LEXT-04**: App stores the reorganized content as structured sections in the DB (heading level, content, source page refs, sort order) for use by Phase 4 generation
+- [x] **LEXT-04**: App stores the reorganized content as structured sections in the DB (heading level, content, source page refs, sort order) for use by Phase 4 generation
 - [ ] **LEXT-05**: App stores the generated .docx in S3 and provides a download link on the module detail page
 - [ ] **LEXT-06**: User can download the reorganized lecture as a .docx (their improved lecture notes)
 
@@ -74,9 +74,9 @@
 
 ### Python Skills Integration
 
-- [ ] **SKILL-01**: Worker can invoke Python skills as subprocesses (Phase 3 pattern)
-- [ ] **SKILL-02**: Python skill output (manifest JSON, structured sections) is parsed and stored by Worker
-- [ ] **SKILL-03**: App works in stub mode without Python skills installed (deterministic fallback content)
+- [x] **SKILL-01**: Worker can invoke Python skills as subprocesses (Phase 3 pattern)
+- [x] **SKILL-02**: Python skill output (manifest JSON, structured sections) is parsed and stored by Worker
+- [x] **SKILL-03**: App works in stub mode without Python skills installed (deterministic fallback content)
 
 ## v2 Requirements
 
@@ -134,20 +134,20 @@
 | LLM-01 | Phase 2 | Complete |
 | LLM-02 | Phase 2 | Complete |
 | LLM-03 | Phase 2 | Complete |
-| FIG-01 | Phase 3 | Pending |
+| FIG-01 | Phase 3 | Complete |
 | FIG-02 | Phase 3 | Pending |
-| FIG-03 | Phase 3 | Pending |
-| FIG-04 | Phase 3 | Pending |
+| FIG-03 | Phase 3 | Complete |
+| FIG-04 | Phase 3 | Complete |
 | FIG-05 | Phase 3 | Pending |
-| LEXT-01 | Phase 3 | Pending |
+| LEXT-01 | Phase 3 | Complete |
 | LEXT-02 | Phase 3 | Pending |
 | LEXT-03 | Phase 3 | Pending |
-| LEXT-04 | Phase 3 | Pending |
+| LEXT-04 | Phase 3 | Complete |
 | LEXT-05 | Phase 3 | Pending |
 | LEXT-06 | Phase 3 | Pending |
-| SKILL-01 | Phase 3 | Pending |
-| SKILL-02 | Phase 3 | Pending |
-| SKILL-03 | Phase 3 | Pending |
+| SKILL-01 | Phase 3 | Complete |
+| SKILL-02 | Phase 3 | Complete |
+| SKILL-03 | Phase 3 | Complete |
 | GEN-01 | Phase 4 | Pending |
 | GEN-02 | Phase 4 | Pending |
 | GEN-03 | Phase 4 | Pending |

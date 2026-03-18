@@ -71,7 +71,16 @@ Plans:
   4. Reorganized content is stored in the DB as structured sections (heading level, content, source page refs) for Phase 4 generation
   5. User can download the reorganized lecture as a .docx from the module detail page
   6. The full figure extraction and lecture extraction pipeline works in stub mode without API keys or Python installed
-**Plans**: TBD
+**Plans**: 7 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Wave 0 test stubs for Skills, Figures, Extraction test classes
+- [ ] 03-02-PLAN.md — Figure and Section EF entities, ExtractionStatus, EF migration, Python stub scripts
+- [ ] 03-03-PLAN.md — ISkillRunner interface, ProcessSkillRunner, StubSkillRunner, Worker DI wiring (TDD)
+- [ ] 03-04-PLAN.md — FigureExtractionJob, FiguresController (GET/PATCH endpoints), IngestionJob wiring (TDD)
+- [ ] 03-05-PLAN.md — LectureExtractionJob (.docx generation), extract trigger and docx download endpoints (TDD)
+- [ ] 03-06-PLAN.md — Frontend: figures review UI, extraction status polling, download button
+- [ ] 03-07-PLAN.md — Human verification: end-to-end pipeline in stub mode
 
 ### Phase 4: Content Generation
 **Goal**: The app generates grounded study materials for every section, traceable to uploaded sources
@@ -104,6 +113,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-03-17 |
 | 2. Document Ingestion | 6/7 | Complete    | 2026-03-18 |
-| 3. Figures and Lecture Extraction | 0/TBD | Not started | - |
+| 3. Figures and Lecture Extraction | 1/7 | In Progress|  |
 | 4. Content Generation | 0/TBD | Not started | - |
 | 5. Study Experience | 0/TBD | Not started | - |
