@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-18T01:04:15.484Z"
+stopped_at: Completed 02-01-PLAN.md (NuGet packages, EF entities, Wave 0 test stubs)
+last_updated: "2026-03-18T03:26:39.528Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 12
+  completed_plans: 6
   percent: 0
 ---
 
@@ -55,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P03 | 9min | 2 tasks | 15 files |
 | Phase 01-foundation P04 | 25min | 3 tasks | 14 files |
 | Phase 01-foundation P05 | 5min | 2 tasks | 0 files |
+| Phase 02-document-ingestion P01 | 6min | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Microsoft.AspNetCore.Mvc.Testing 10.0.5 used for test infrastructure (legacy 2.x Authentication meta-package avoided)
 - [Phase 01-foundation]: Phase 1 foundation verified end-to-end by human: docker compose, API, Worker, and frontend all confirmed working
 - [Phase 01-foundation]: All Phase 1 ROADMAP success criteria confirmed true before Phase 2 begins
+- [Phase 02-document-ingestion]: Worker references Api via ProjectReference (not duplicating models); EF 10.0.5 pinned in Worker to suppress Hangfire.PostgreSql transitive EF 10.0.4 conflict
+- [Phase 02-document-ingestion]: DocumentStatus stored as string column via HasConversion<string>() for DB readability
 
 ### Pending Todos
 
@@ -89,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T01:04:15.465Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-document-ingestion/02-CONTEXT.md
+Last session: 2026-03-18T03:26:39.523Z
+Stopped at: Completed 02-01-PLAN.md (NuGet packages, EF entities, Wave 0 test stubs)
+Resume file: None

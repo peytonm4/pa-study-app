@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-03-17 |
-| 2. Document Ingestion | 0/7 | Not started | - |
+| 2. Document Ingestion | 1/7 | In Progress|  |
 | 3. Objectives and Figures | 0/TBD | Not started | - |
 | 4. Content Generation | 0/TBD | Not started | - |
 | 5. Study Experience | 0/TBD | Not started | - |
