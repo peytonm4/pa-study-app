@@ -36,7 +36,7 @@
 - [x] **FIG-02**: App filters out logos, watermarks, template backgrounds, stock photos, and repeated elements automatically (handled by extraction script heuristics)
 - [x] **FIG-03**: App pre-selects figures that have associated captions or labels (Figure, Table, Algorithm, Flowchart) as Keep
 - [x] **FIG-04**: User can review detected figures and toggle Keep/Ignore for each before lecture extraction runs
-- [ ] **FIG-05**: App extracts captions for kept figures via vision model (Gemini)
+- [x] **FIG-05**: App extracts captions for kept figures via vision model (Gemini)
 
 ### Lecture Extraction
 
@@ -138,7 +138,7 @@
 | FIG-02 | Phase 3 | Complete |
 | FIG-03 | Phase 3 | Complete |
 | FIG-04 | Phase 3 | Complete |
-| FIG-05 | Phase 3 | Pending |
+| FIG-05 | Phase 3 | Complete |
 | LEXT-01 | Phase 3 | Complete |
 | LEXT-02 | Phase 3 | Pending |
 | LEXT-03 | Phase 3 | Complete |

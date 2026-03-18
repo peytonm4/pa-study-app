@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-03-PLAN.md — ISkillRunner interface, ProcessSkillRunner, StubSkillRunner, DI wiring
-last_updated: "2026-03-18T20:37:45.022Z"
+stopped_at: Completed 03-04-PLAN.md — FigureExtractionJob, FiguresController, figure endpoints
+last_updated: "2026-03-18T20:46:17.247Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 19
-  completed_plans: 15
+  completed_plans: 16
   percent: 0
 ---
 
@@ -66,6 +66,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-objectives-and-figures P01 | 5min | 2 tasks | 7 files |
 | Phase 03-objectives-and-figures P02 | 2min | 2 tasks | 10 files |
 | Phase 03-objectives-and-figures P03 | 12min | 2 tasks | 8 files |
+| Phase 03-objectives-and-figures P04 | 5min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,8 @@ Recent decisions affecting current work:
 - [Phase 03-objectives-and-figures]: ExtractionStatus HasConversion<string>() matches DocumentStatus pattern for DB readability
 - [Phase 03-objectives-and-figures]: Python stubs use only stdlib — requirements.txt stays empty, scripts run anywhere without pip install
 - [Phase 03-objectives-and-figures]: ISkillRunner registered as Scoped in DI; PYTHON_PROVIDER=stub|real env var switch mirrors VISION_PROVIDER pattern
+- [Phase 03-objectives-and-figures]: FigureExtractionJob uses IConfiguration key Skills:BasePath for script path resolution — consistent with LectureExtractionJob pattern
+- [Phase 03-objectives-and-figures]: FiguresController thumbnail URL is API proxy path /api/figures/{id}/thumbnail — no presigned S3 URLs
 
 ### Pending Todos
 
@@ -123,6 +126,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T20:37:45.018Z
-Stopped at: Completed 03-03-PLAN.md — ISkillRunner interface, ProcessSkillRunner, StubSkillRunner, DI wiring
+Last session: 2026-03-18T20:46:17.242Z
+Stopped at: Completed 03-04-PLAN.md — FigureExtractionJob, FiguresController, figure endpoints
 Resume file: None
