@@ -7,8 +7,13 @@ export interface Module {
   createdAt: string;
 }
 
+export interface ModuleDetail extends Module {
+  documents: import('./documents').DocumentStatus[];
+}
+
 export const modules = {
   list: () => client.get<Module[]>('/modules').then(r => r.data),
+  get: (id: string) => client.get<ModuleDetail>(`/modules/${id}`).then(r => r.data),
   create: (name: string) => client.post<Module>('/modules', { name }).then(r => r.data),
   delete: (id: string) => client.delete(`/modules/${id}`),
 };

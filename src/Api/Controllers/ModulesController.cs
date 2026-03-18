@@ -75,6 +75,33 @@ public class ModulesController : ControllerBase
         });
     }
 
+    // GET /modules/{id}
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetModule(Guid id)
+    {
+        var userId = CurrentUserId;
+        var module = await _db.Modules
+            .Include(m => m.Documents)
+            .FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId);
+
+        if (module is null) return NotFound();
+
+        return Ok(new
+        {
+            module.Id,
+            module.Name,
+            Status = ComputeStatus(module),
+            module.CreatedAt,
+            Documents = module.Documents.Select(d => new
+            {
+                d.Id,
+                d.FileName,
+                Status = d.Status.ToString(),
+                d.CreatedAt
+            })
+        });
+    }
+
     // DELETE /modules/{id}
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteModule(Guid id)
