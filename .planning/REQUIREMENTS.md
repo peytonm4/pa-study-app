@@ -41,11 +41,11 @@
 ### Lecture Extraction
 
 - [x] **LEXT-01**: After figure review, user can trigger lecture extraction for a module
-- [ ] **LEXT-02**: App calls the lecture extractor Python skill as a subprocess, passing the curated figure list
+- [x] **LEXT-02**: App calls the lecture extractor Python skill as a subprocess, passing the curated figure list
 - [x] **LEXT-03**: Lecture extractor reorganizes scattered lecture content into a coherent topic hierarchy (H1/H2/H3 sections), embedding kept figures at appropriate locations
 - [x] **LEXT-04**: App stores the reorganized content as structured sections in the DB (heading level, content, source page refs, sort order) for use by Phase 4 generation
-- [ ] **LEXT-05**: App stores the generated .docx in S3 and provides a download link on the module detail page
-- [ ] **LEXT-06**: User can download the reorganized lecture as a .docx (their improved lecture notes)
+- [x] **LEXT-05**: App stores the generated .docx in S3 and provides a download link on the module detail page
+- [x] **LEXT-06**: User can download the reorganized lecture as a .docx (their improved lecture notes)
 
 ### Content Generation
 
@@ -140,11 +140,11 @@
 | FIG-04 | Phase 3 | Complete |
 | FIG-05 | Phase 3 | Complete |
 | LEXT-01 | Phase 3 | Complete |
-| LEXT-02 | Phase 3 | Pending |
+| LEXT-02 | Phase 3 | Complete |
 | LEXT-03 | Phase 3 | Complete |
 | LEXT-04 | Phase 3 | Complete |
-| LEXT-05 | Phase 3 | Pending |
-| LEXT-06 | Phase 3 | Pending |
+| LEXT-05 | Phase 3 | Complete |
+| LEXT-06 | Phase 3 | Complete |
 | SKILL-01 | Phase 3 | Complete |
 | SKILL-02 | Phase 3 | Complete |
 | SKILL-03 | Phase 3 | Complete |
