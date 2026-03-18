@@ -2,6 +2,7 @@ using Anthropic;
 using Google.GenAI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StudyApp.Api.Providers;
 using StudyApp.Worker.Providers;
 
 namespace StudyApp.Worker;

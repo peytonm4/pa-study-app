@@ -3,6 +3,8 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using StudyApp.Api.Data;
+using StudyApp.Api.Extraction;
+using StudyApp.Api.Jobs;
 using StudyApp.Api.Services;
 using StudyApp.Worker;
 using StudyApp.Worker.Extraction;
@@ -35,12 +37,16 @@ builder.Services.AddHangfire(config =>
         c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Default"))));
 builder.Services.AddHangfireServer();
 
-// Extraction services
+// Extraction services — interfaces in Api.Extraction, implementations in Worker.Extraction
 builder.Services.AddScoped<IPptxExtractor, PptxExtractor>();
 builder.Services.AddScoped<IPdfExtractor, PdfExtractor>();
 
 // Provider selection via env vars (LLM-03)
 builder.Services.AddProviders(builder.Configuration);
+
+// Hangfire jobs — registered so Hangfire can resolve via DI
+builder.Services.AddScoped<IngestionJob>();
+builder.Services.AddScoped<VisionExtractionJob>();
 
 builder.Services.AddHostedService<Worker>();
 

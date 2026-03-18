@@ -1,3 +1,5 @@
+using StudyApp.Api.Providers;
+
 namespace StudyApp.Worker.Providers;
 
 public class StubVisionProvider : IVisionProvider

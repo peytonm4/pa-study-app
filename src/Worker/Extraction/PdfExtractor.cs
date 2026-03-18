@@ -1,3 +1,4 @@
+using StudyApp.Api.Extraction;
 using UglyToad.PdfPig;
 
 namespace StudyApp.Worker.Extraction;

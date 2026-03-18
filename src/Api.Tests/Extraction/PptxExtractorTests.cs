@@ -1,6 +1,7 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
+using StudyApp.Api.Extraction;
 using StudyApp.Worker.Extraction;
 using A = DocumentFormat.OpenXml.Drawing;
 

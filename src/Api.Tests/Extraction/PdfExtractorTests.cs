@@ -1,3 +1,4 @@
+using StudyApp.Api.Extraction;
 using StudyApp.Worker.Extraction;
 
 namespace StudyApp.Api.Tests.Extraction;
