@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Runnable local stack with dev auth and all infrastructure wired up (completed 2026-03-17)
 - [x] **Phase 2: Document Ingestion** - PPTX and PDF sources uploaded, processed, and chunked with LLM providers wired (completed 2026-03-18)
-- [ ] **Phase 3: Objectives and Figures** - User input pipeline complete (objectives pasted + figures reviewed)
+- [ ] **Phase 3: Figures and Lecture Extraction** - Figures curated, lecture reorganized into structured .docx + sections in DB
 - [ ] **Phase 4: Content Generation** - Grounded study materials generated for every objective
 - [ ] **Phase 5: Study Experience** - Students can browse and do guided study sessions
 
@@ -60,38 +60,39 @@ Plans:
 - [ ] 02-06-PLAN.md — React frontend: ModuleListPage, ModuleDetailPage, routing, status polling
 - [ ] 02-07-PLAN.md — Human verification: end-to-end pipeline confirmation
 
-### Phase 3: Objectives and Figures
-**Goal**: User completes the input pipeline — objectives pasted and figures reviewed — before generation begins
+### Phase 3: Figures and Lecture Extraction
+**Goal**: User curates extracted figures, then the lecture extractor skill reorganizes scattered lecture content into a structured document — producing both a downloadable .docx and structured sections in the DB ready for generation
 **Depends on**: Phase 2
-**Requirements**: OBJ-01, OBJ-02, OBJ-03, OBJ-04, FIG-01, FIG-02, FIG-03, FIG-04, FIG-05
+**Requirements**: FIG-01, FIG-02, FIG-03, FIG-04, FIG-05, LEXT-01, LEXT-02, LEXT-03, LEXT-04, LEXT-05, LEXT-06, SKILL-01, SKILL-02, SKILL-03
 **Success Criteria** (what must be TRUE):
-  1. User can paste a block of learning objectives (bullets, numbered, or line-separated) and the app parses them into individual objectives with sort order preserved
-  2. Each objective is linked to the source chunks most relevant to it using deterministic scoring (no LLM required for this step)
-  3. User sees a figures review UI listing all detected figures with Keep/Ignore toggles, with logos and watermarks already filtered out
-  4. Figures that have labels or captions (Figure, Table, Algorithm, Flowchart) are pre-selected as Keep
-  5. Captions are extracted via vision model for all kept figures
+  1. After document ingestion, figures are automatically extracted and filtered (logos, watermarks, template elements removed) with caption-labeled figures pre-selected as Keep
+  2. User can review extracted figures on the module detail page and toggle Keep/Ignore for each
+  3. After figure review, user can trigger lecture extraction — the Python skill runs as a subprocess and reorganizes content into a coherent topic hierarchy
+  4. Reorganized content is stored in the DB as structured sections (heading level, content, source page refs) for Phase 4 generation
+  5. User can download the reorganized lecture as a .docx from the module detail page
+  6. The full figure extraction and lecture extraction pipeline works in stub mode without API keys or Python installed
 **Plans**: TBD
 
 ### Phase 4: Content Generation
-**Goal**: The app generates grounded study materials for every objective, traceable to uploaded sources
+**Goal**: The app generates grounded study materials for every section, traceable to uploaded sources
 **Depends on**: Phase 3
 **Requirements**: GEN-01, GEN-02, GEN-03, GEN-04, GEN-05, GEN-06, GEN-07, GEN-08
 **Success Criteria** (what must be TRUE):
-  1. Every objective has a generated answer page with Direct Answer, High-Yield Details, Key Tables, Must-Know Numbers, and Sources sections
-  2. Every objective has flashcards (cloze and Q&A mix) and a micro-quiz, each with slide/page source references
-  3. Objectives with algorithmic content (algorithm, flowchart, workup, stepwise, if/then keywords) get a Mermaid concept map; objectives without do not
+  1. Every section has a generated study guide page with Direct Answer, High-Yield Details, Key Tables, Must-Know Numbers, and Sources sections
+  2. Every section has flashcards (cloze and Q&A mix) and a micro-quiz, each with slide/page source references
+  3. Sections with algorithmic content (algorithm, flowchart, workup, stepwise, if/then keywords) get a Mermaid concept map; sections without do not
   4. When evidence is insufficient the app shows "Not found in your sources" rather than generating unsupported content
   5. The full generation pipeline runs end-to-end in stub mode without any LLM API keys configured
 **Plans**: TBD
 
 ### Phase 5: Study Experience
-**Goal**: Students can browse generated materials freely or complete a guided study session per objective
+**Goal**: Students can browse generated materials freely or complete a guided study session per section
 **Depends on**: Phase 4
 **Requirements**: STUDY-01, STUDY-02, STUDY-03, STUDY-04, STUDY-05
 **Success Criteria** (what must be TRUE):
-  1. Student can open any objective and read its answer page, flashcards, and concept map in reference mode without being forced into a flow
-  2. Student can launch a guided study session for any objective that walks through preview, flashcards, and quiz in sequence then marks the objective done
-  3. After completing cards and a quiz, the objective shows progress (cards reviewed count, quiz completed status)
+  1. Student can open any section and read its study guide page, flashcards, and concept map in reference mode without being forced into a flow
+  2. Student can launch a guided study session for any section that walks through preview, flashcards, and quiz in sequence then marks the section done
+  3. After completing cards and a quiz, the section shows progress (cards reviewed count, quiz completed status)
 **Plans**: TBD
 
 ## Progress
@@ -103,6 +104,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-03-17 |
 | 2. Document Ingestion | 6/7 | Complete    | 2026-03-18 |
-| 3. Objectives and Figures | 0/TBD | Not started | - |
+| 3. Figures and Lecture Extraction | 0/TBD | Not started | - |
 | 4. Content Generation | 0/TBD | Not started | - |
 | 5. Study Experience | 0/TBD | Not started | - |
