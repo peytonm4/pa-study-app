@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-06-PLAN.md (ModuleListPage, ModuleDetailPage, React Router routes, API domain files)
-last_updated: "2026-03-18T04:16:59.410Z"
+stopped_at: Completed 02-07-PLAN.md (Phase 2 end-to-end verification, full pipeline confirmed)
+last_updated: "2026-03-18T14:14:15.567Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
   percent: 0
 ---
 
@@ -61,6 +61,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-document-ingestion P04 | 11min | 2 tasks | 12 files |
 | Phase 02-document-ingestion P05 | 21min | 3 tasks | 19 files |
 | Phase 02-document-ingestion P06 | 12min | 2 tasks | 9 files |
+| Phase 02-document-ingestion P07 | 15min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,8 @@ Recent decisions affecting current work:
 - [Phase 02-document-ingestion]: DbContextOptions<AppDbContext> registered as singleton directly in test factory to bypass Npgsql+InMemory dual-provider EF 10 conflict
 - [Phase 02-document-ingestion]: Added GET /modules/:id backend endpoint (Rule 2) — no list-documents endpoint existed; ModuleDetailPage requires it to show previously uploaded files on load
 - [Phase 02-document-ingestion]: DocumentRow as child component gives each document its own isolated polling useQuery instance with independent lifecycle
+- [Phase 02-document-ingestion]: API runs on port 5159 (launchSettings.json default) not 5000; axios fallback updated to match; VITE_API_URL .env was already correct
+- [Phase 02-document-ingestion]: All Phase 2 ROADMAP success criteria confirmed true against live stack; Phase 2 complete
 
 ### Pending Todos
 
@@ -109,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T04:16:59.406Z
-Stopped at: Completed 02-06-PLAN.md (ModuleListPage, ModuleDetailPage, React Router routes, API domain files)
+Last session: 2026-03-18T14:14:15.557Z
+Stopped at: Completed 02-07-PLAN.md (Phase 2 end-to-end verification, full pipeline confirmed)
 Resume file: None
