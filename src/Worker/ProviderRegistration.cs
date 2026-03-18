@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StudyApp.Api.Providers;
 using StudyApp.Worker.Providers;
+using StudyApp.Worker.Skills;
 
 namespace StudyApp.Worker;
 
@@ -30,6 +31,12 @@ public static class ProviderRegistration
                 services.AddSingleton<IGenerationProvider, StubGenerationProvider>();
                 break;
         }
+
+        var pythonProvider = config["PYTHON_PROVIDER"] ?? "stub";
+        if (pythonProvider == "real")
+            services.AddScoped<ISkillRunner, ProcessSkillRunner>();
+        else
+            services.AddScoped<ISkillRunner, StubSkillRunner>();
 
         return services;
     }
