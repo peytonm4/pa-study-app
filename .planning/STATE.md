@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: "Completed 02-04-PLAN.md (LLM provider abstraction layer: interfaces, stubs, real providers, DI wiring)"
-last_updated: "2026-03-18T03:46:43.311Z"
+stopped_at: Completed 02-05-PLAN.md (IngestionJob, VisionExtractionJob, DocumentUpload integration tests)
+last_updated: "2026-03-18T04:12:24.782Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 12
-  completed_plans: 9
+  completed_plans: 10
   percent: 0
 ---
 
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-document-ingestion P02 | 15min | 3 tasks | 9 files |
 | Phase 02-document-ingestion P03 | 7min | 2 tasks | 13 files |
 | Phase 02-document-ingestion P04 | 11min | 2 tasks | 12 files |
+| Phase 02-document-ingestion P05 | 21min | 3 tasks | 19 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,9 @@ Recent decisions affecting current work:
 - [Phase 02-document-ingestion]: Google.GenAI SDK uses Client (not GoogleAI) as main entry point in version 1.5.0
 - [Phase 02-document-ingestion]: ProviderRegistration extension method replaces ProviderConfig singleton for testable env-var DI switching
 - [Phase 02-document-ingestion]: Api.Tests gains Worker ProjectReference to enable unit-testing of provider implementations
+- [Phase 02-document-ingestion]: Extractor interfaces (IPptxExtractor, IPdfExtractor, IVisionProvider) moved to Api project so IngestionJob and VisionExtractionJob in Api/Jobs can reference them without circular project dependency
+- [Phase 02-document-ingestion]: WebApplicationFactory uses DevAuthHandler as type anchor — both Api and Worker generate ambiguous Program class from top-level statements
+- [Phase 02-document-ingestion]: DbContextOptions<AppDbContext> registered as singleton directly in test factory to bypass Npgsql+InMemory dual-provider EF 10 conflict
 
 ### Pending Todos
 
@@ -102,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T03:46:43.307Z
-Stopped at: Completed 02-04-PLAN.md (LLM provider abstraction layer: interfaces, stubs, real providers, DI wiring)
+Last session: 2026-03-18T04:12:24.778Z
+Stopped at: Completed 02-05-PLAN.md (IngestionJob, VisionExtractionJob, DocumentUpload integration tests)
 Resume file: None

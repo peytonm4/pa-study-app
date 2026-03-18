@@ -22,13 +22,13 @@
 
 ### Document Ingestion
 
-- [ ] **INGEST-01**: User can upload PPTX files as primary study sources
-- [ ] **INGEST-02**: User can upload PDF files as supplementary sources
-- [ ] **INGEST-03**: App extracts text from PPTX slides deterministically (OpenXML SDK)
-- [ ] **INGEST-04**: App extracts text layer from PDFs when available
-- [ ] **INGEST-05**: App detects PDF pages with no text layer and routes them for vision extraction
-- [ ] **INGEST-06**: App extracts speaker notes from PPTX slides
-- [ ] **INGEST-07**: App creates chunks per slide/page with metadata (file name, slide/page number)
+- [x] **INGEST-01**: User can upload PPTX files as primary study sources
+- [x] **INGEST-02**: User can upload PDF files as supplementary sources
+- [x] **INGEST-03**: App extracts text from PPTX slides deterministically (OpenXML SDK)
+- [x] **INGEST-04**: App extracts text layer from PDFs when available
+- [x] **INGEST-05**: App detects PDF pages with no text layer and routes them for vision extraction
+- [x] **INGEST-06**: App extracts speaker notes from PPTX slides
+- [x] **INGEST-07**: App creates chunks per slide/page with metadata (file name, slide/page number)
 
 ### Objectives
 
@@ -66,9 +66,9 @@
 
 ### LLM Integration
 
-- [ ] **LLM-01**: Vision extraction uses Gemini (PDF OCR, figure captions)
-- [ ] **LLM-02**: Content generation supports pluggable providers (Claude, Gemini, or Stub)
-- [ ] **LLM-03**: Provider is configured via environment variables
+- [x] **LLM-01**: Vision extraction uses Gemini (PDF OCR, figure captions)
+- [x] **LLM-02**: Content generation supports pluggable providers (Claude, Gemini, or Stub)
+- [x] **LLM-03**: Provider is configured via environment variables
 
 ## v2 Requirements
 
@@ -111,16 +111,16 @@
 | INFRA-07 | Phase 1 | Complete |
 | AUTH-01 | Phase 1 | Complete |
 | AUTH-02 | Phase 1 | Complete |
-| INGEST-01 | Phase 2 | Pending |
-| INGEST-02 | Phase 2 | Pending |
-| INGEST-03 | Phase 2 | Pending |
-| INGEST-04 | Phase 2 | Pending |
-| INGEST-05 | Phase 2 | Pending |
-| INGEST-06 | Phase 2 | Pending |
-| INGEST-07 | Phase 2 | Pending |
-| LLM-01 | Phase 2 | Pending |
-| LLM-02 | Phase 2 | Pending |
-| LLM-03 | Phase 2 | Pending |
+| INGEST-01 | Phase 2 | Complete |
+| INGEST-02 | Phase 2 | Complete |
+| INGEST-03 | Phase 2 | Complete |
+| INGEST-04 | Phase 2 | Complete |
+| INGEST-05 | Phase 2 | Complete |
+| INGEST-06 | Phase 2 | Complete |
+| INGEST-07 | Phase 2 | Complete |
+| LLM-01 | Phase 2 | Complete |
+| LLM-02 | Phase 2 | Complete |
+| LLM-03 | Phase 2 | Complete |
 | OBJ-01 | Phase 3 | Pending |
 | OBJ-02 | Phase 3 | Pending |
 | OBJ-03 | Phase 3 | Pending |
