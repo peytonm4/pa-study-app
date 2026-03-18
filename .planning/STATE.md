@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-02-PLAN.md — Figure/Section entities, EF migration, Python stubs
-last_updated: "2026-03-18T20:36:38.925Z"
+stopped_at: Completed 03-03-PLAN.md — ISkillRunner interface, ProcessSkillRunner, StubSkillRunner, DI wiring
+last_updated: "2026-03-18T20:37:45.022Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 19
-  completed_plans: 14
+  completed_plans: 15
   percent: 0
 ---
 
@@ -65,6 +65,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-document-ingestion P07 | 15min | 2 tasks | 1 files |
 | Phase 03-objectives-and-figures P01 | 5min | 2 tasks | 7 files |
 | Phase 03-objectives-and-figures P02 | 2min | 2 tasks | 10 files |
+| Phase 03-objectives-and-figures P03 | 12min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,7 @@ Recent decisions affecting current work:
 - [Phase 03-objectives-and-figures]: Figures FK to Document (not Module directly) — extraction runs per-document; Sections own by Module from DOCX extraction
 - [Phase 03-objectives-and-figures]: ExtractionStatus HasConversion<string>() matches DocumentStatus pattern for DB readability
 - [Phase 03-objectives-and-figures]: Python stubs use only stdlib — requirements.txt stays empty, scripts run anywhere without pip install
+- [Phase 03-objectives-and-figures]: ISkillRunner registered as Scoped in DI; PYTHON_PROVIDER=stub|real env var switch mirrors VISION_PROVIDER pattern
 
 ### Pending Todos
 
@@ -121,6 +123,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T20:36:38.921Z
-Stopped at: Completed 03-02-PLAN.md — Figure/Section entities, EF migration, Python stubs
+Last session: 2026-03-18T20:37:45.018Z
+Stopped at: Completed 03-03-PLAN.md — ISkillRunner interface, ProcessSkillRunner, StubSkillRunner, DI wiring
 Resume file: None
