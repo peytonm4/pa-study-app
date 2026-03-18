@@ -1,6 +1,45 @@
+using Amazon.S3;
+using Hangfire;
+using Hangfire.PostgreSql;
+using Microsoft.EntityFrameworkCore;
+using StudyApp.Api.Data;
+using StudyApp.Api.Services;
 using StudyApp.Worker;
 
 var builder = Host.CreateApplicationBuilder(args);
+
+// Database — same connection string as API
+builder.Services.AddDbContext<AppDbContext>(opts =>
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+// S3-compatible storage
+builder.Services.AddSingleton<IAmazonS3>(_ =>
+{
+    var s3Config = new AmazonS3Config
+    {
+        ServiceURL = builder.Configuration["Storage:ServiceUrl"],
+        ForcePathStyle = true
+    };
+    return new AmazonS3Client(
+        builder.Configuration["Storage:AccessKey"],
+        builder.Configuration["Storage:SecretKey"],
+        s3Config
+    );
+});
+builder.Services.AddScoped<IStorageService, S3StorageService>();
+
+// Hangfire — process jobs from shared Postgres queue
+builder.Services.AddHangfire(config =>
+    config.UsePostgreSqlStorage(c =>
+        c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Default"))));
+builder.Services.AddHangfireServer();
+
+// Provider selection via env vars (LLM-03)
+// Actual provider implementations registered in plan 02-05
+var visionProvider = builder.Configuration["VISION_PROVIDER"] ?? "stub";
+var generationProvider = builder.Configuration["GENERATION_PROVIDER"] ?? "stub";
+builder.Services.AddSingleton(new ProviderConfig(visionProvider, generationProvider));
+
 builder.Services.AddHostedService<Worker>();
 
 var host = builder.Build();
