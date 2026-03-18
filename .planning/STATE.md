@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-02-PLAN.md (upload API, storage service, Worker Hangfire wiring)
-last_updated: "2026-03-18T03:31:53.262Z"
+stopped_at: Completed 02-03-PLAN.md (PPTX and PDF extraction TDD)
+last_updated: "2026-03-18T03:41:12.033Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 12
-  completed_plans: 7
+  completed_plans: 8
   percent: 0
 ---
 
@@ -57,6 +57,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P05 | 5min | 2 tasks | 0 files |
 | Phase 02-document-ingestion P01 | 6min | 3 tasks | 14 files |
 | Phase 02-document-ingestion P02 | 15min | 3 tasks | 9 files |
+| Phase 02-document-ingestion P03 | 7min | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,8 @@ Recent decisions affecting current work:
 - [Phase 02-document-ingestion]: DocumentStatus stored as string column via HasConversion<string>() for DB readability
 - [Phase 02-document-ingestion]: IngestionJob stub in src/Api/Jobs/ shared between Api and Worker via ProjectReference
 - [Phase 02-document-ingestion]: ProviderConfig singleton registered in Worker for LLM provider selection (stub/anthropic/google)
+- [Phase 02-document-ingestion]: Worker ProjectReference added to Api.Tests for extractor type access
+- [Phase 02-document-ingestion]: Google.GenAI 1.5.0 uses Client class (not GoogleAI); Blob.Data is byte[] not base64 string
 
 ### Pending Todos
 
@@ -95,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T03:31:53.258Z
-Stopped at: Completed 02-02-PLAN.md (upload API, storage service, Worker Hangfire wiring)
+Last session: 2026-03-18T03:41:12.029Z
+Stopped at: Completed 02-03-PLAN.md (PPTX and PDF extraction TDD)
 Resume file: None
