@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Api\StudyApp.Api.csproj" />
+    <ProjectReference Include="..\Worker\StudyApp.Worker.csproj" />
   </ItemGroup>
 
 </Project>
