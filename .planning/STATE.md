@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-05-PLAN.md — LectureExtractionJob, ISkillRunner migration to Api.Skills, POST /extract and GET /docx endpoints
-last_updated: "2026-03-18T20:47:40.467Z"
+stopped_at: Completed 03-06-PLAN.md — figures.ts API client, ModuleDetailPage figure review and extraction UI
+last_updated: "2026-03-18T20:50:44.544Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 19
-  completed_plans: 17
+  completed_plans: 18
   percent: 0
 ---
 
@@ -68,6 +68,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-objectives-and-figures P03 | 12min | 2 tasks | 8 files |
 | Phase 03-objectives-and-figures P04 | 5min | 2 tasks | 6 files |
 | Phase 03-objectives-and-figures P05 | 35min | 2 tasks | 9 files |
+| Phase 03-objectives-and-figures P06 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -118,6 +119,7 @@ Recent decisions affecting current work:
 - [Phase 03-objectives-and-figures]: FiguresController thumbnail URL is API proxy path /api/figures/{id}/thumbnail — no presigned S3 URLs
 - [Phase 03-objectives-and-figures]: ISkillRunner moved from Worker.Skills to Api.Skills — Worker already references Api, so Api.Skills avoids circular project dependency
 - [Phase 03-objectives-and-figures]: POST /extract returns 409 if ExtractionStatus not in NotStarted/Failed — prevents duplicate job enqueue
+- [Phase 03-objectives-and-figures]: figures.ts API client mirrors documents.ts pattern; ModuleDetailPage extended with FigureCard grid, Keep/Ignore toggles, extraction polling, and download button
 
 ### Pending Todos
 
@@ -129,6 +131,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T20:47:40.463Z
-Stopped at: Completed 03-05-PLAN.md — LectureExtractionJob, ISkillRunner migration to Api.Skills, POST /extract and GET /docx endpoints
+Last session: 2026-03-18T20:50:44.540Z
+Stopped at: Completed 03-06-PLAN.md — figures.ts API client, ModuleDetailPage figure review and extraction UI
 Resume file: None
