@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-01-PLAN.md — Wave 0 test stubs for Skills, Figures, Extraction
-last_updated: "2026-03-18T20:32:46.397Z"
+stopped_at: Completed 03-02-PLAN.md — Figure/Section entities, EF migration, Python stubs
+last_updated: "2026-03-18T20:36:38.925Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 19
-  completed_plans: 13
+  completed_plans: 14
   percent: 0
 ---
 
@@ -64,6 +64,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-document-ingestion P06 | 12min | 2 tasks | 9 files |
 | Phase 02-document-ingestion P07 | 15min | 2 tasks | 1 files |
 | Phase 03-objectives-and-figures P01 | 5min | 2 tasks | 7 files |
+| Phase 03-objectives-and-figures P02 | 2min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,9 @@ Recent decisions affecting current work:
 - [Phase 02-document-ingestion]: API runs on port 5159 (launchSettings.json default) not 5000; axios fallback updated to match; VITE_API_URL .env was already correct
 - [Phase 02-document-ingestion]: All Phase 2 ROADMAP success criteria confirmed true against live stack; Phase 2 complete
 - [Phase 03-objectives-and-figures]: Wave 0 stubs use only Xunit; no unimplemented type references — compilation always clean before implementation plans run
+- [Phase 03-objectives-and-figures]: Figures FK to Document (not Module directly) — extraction runs per-document; Sections own by Module from DOCX extraction
+- [Phase 03-objectives-and-figures]: ExtractionStatus HasConversion<string>() matches DocumentStatus pattern for DB readability
+- [Phase 03-objectives-and-figures]: Python stubs use only stdlib — requirements.txt stays empty, scripts run anywhere without pip install
 
 ### Pending Todos
 
@@ -117,6 +121,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T20:32:41.129Z
-Stopped at: Completed 03-01-PLAN.md — Wave 0 test stubs for Skills, Figures, Extraction
+Last session: 2026-03-18T20:36:38.921Z
+Stopped at: Completed 03-02-PLAN.md — Figure/Section entities, EF migration, Python stubs
 Resume file: None
