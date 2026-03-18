@@ -21,7 +21,8 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Every piece of generated content must be traceable to uploaded source material — if it isn't in the sources, the app says so rather than hallucinating.
-**Current focus:** Phase 1 - Foundation
+**Current focus:** Phase 3 - Figures and Lecture Extraction
+**GitHub:** https://github.com/peytonm4/pa-study-app
 
 ## Current Position
 
@@ -70,7 +71,9 @@ Progress: [░░░░░░░░░░] 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- Objectives are manual-paste only (MVP): Auto-detection deferred to v2
+- Objectives removed: learning objectives were unreliable proxies for exam content — replaced by lecture extractor topic hierarchy
+- Python skills integration: subprocess pattern for Phase 3, FastAPI sidecar planned for Phase 4 when second skill added
+- GitHub repo created: https://github.com/peytonm4/pa-study-app (public)
 - Grounding-only generation: No model knowledge injected — hallucinations are dangerous in medical education
 - Stub mode required: Must run locally without API keys
 - Hangfire with Postgres storage: One less infrastructure piece (vs Redis)
