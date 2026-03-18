@@ -1,7 +1,10 @@
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudyApp.Api.Data;
+using StudyApp.Api.Jobs;
+using StudyApp.Api.Models;
 using StudyApp.Api.Services;
 
 namespace StudyApp.Api.Controllers;
@@ -9,7 +12,7 @@ namespace StudyApp.Api.Controllers;
 [ApiController]
 [Route("api")]
 [Authorize]
-public class FiguresController(AppDbContext db, IStorageService storage) : ControllerBase
+public class FiguresController(AppDbContext db, IStorageService storage, IBackgroundJobClient jobClient) : ControllerBase
 {
     // GET /api/modules/{moduleId}/figures
     [HttpGet("modules/{moduleId:guid}/figures")]
@@ -61,6 +64,59 @@ public class FiguresController(AppDbContext db, IStorageService storage) : Contr
 
         var stream = await storage.DownloadAsync(figure.S3Key);
         return File(stream, "image/png");
+    }
+
+    // POST /api/modules/{moduleId}/extract
+    [HttpPost("modules/{moduleId:guid}/extract")]
+    public async Task<IActionResult> TriggerExtraction(Guid moduleId)
+    {
+        var module = await db.Modules.FindAsync(moduleId);
+        if (module is null) return NotFound();
+
+        // Prevent double-trigger — only allow if NotStarted or Failed
+        if (module.ExtractionStatus is not ExtractionStatus.NotStarted and not ExtractionStatus.Failed)
+            return Conflict(new ProblemDetails
+            {
+                Title = "Extraction already in progress or complete.",
+                Detail = $"Module extraction status is {module.ExtractionStatus}."
+            });
+
+        module.ExtractionStatus = ExtractionStatus.Queued;
+        await db.SaveChangesAsync();
+
+        jobClient.Enqueue<LectureExtractionJob>(j => j.Execute(moduleId, default));
+
+        return Accepted();
+    }
+
+    // GET /api/modules/{moduleId}/docx
+    [HttpGet("modules/{moduleId:guid}/docx")]
+    public async Task<IActionResult> GetDocxUrl(Guid moduleId)
+    {
+        var module = await db.Modules.FindAsync(moduleId);
+        if (module is null) return NotFound();
+
+        if (module.ExtractionStatus != ExtractionStatus.Ready)
+            return Conflict(new ProblemDetails
+            {
+                Title = "Docx not ready.",
+                Detail = $"Module extraction status is {module.ExtractionStatus}."
+            });
+
+        return Ok(new { url = $"/api/modules/{moduleId}/docx/download" });
+    }
+
+    // GET /api/modules/{moduleId}/docx/download
+    [HttpGet("modules/{moduleId:guid}/docx/download")]
+    public async Task<IActionResult> DownloadDocx(Guid moduleId)
+    {
+        var module = await db.Modules.FindAsync(moduleId);
+        if (module is null || string.IsNullOrEmpty(module.DocxS3Key)) return NotFound();
+
+        var stream = await storage.DownloadAsync(module.DocxS3Key);
+        return File(stream,
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "lecture.docx");
     }
 }
 
