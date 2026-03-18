@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-03-PLAN.md (PPTX and PDF extraction TDD)
-last_updated: "2026-03-18T03:41:12.033Z"
+stopped_at: "Completed 02-04-PLAN.md (LLM provider abstraction layer: interfaces, stubs, real providers, DI wiring)"
+last_updated: "2026-03-18T03:46:43.311Z"
 last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 12
-  completed_plans: 8
+  completed_plans: 9
   percent: 0
 ---
 
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-document-ingestion P01 | 6min | 3 tasks | 14 files |
 | Phase 02-document-ingestion P02 | 15min | 3 tasks | 9 files |
 | Phase 02-document-ingestion P03 | 7min | 2 tasks | 13 files |
+| Phase 02-document-ingestion P04 | 11min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,9 @@ Recent decisions affecting current work:
 - [Phase 02-document-ingestion]: ProviderConfig singleton registered in Worker for LLM provider selection (stub/anthropic/google)
 - [Phase 02-document-ingestion]: Worker ProjectReference added to Api.Tests for extractor type access
 - [Phase 02-document-ingestion]: Google.GenAI 1.5.0 uses Client class (not GoogleAI); Blob.Data is byte[] not base64 string
+- [Phase 02-document-ingestion]: Google.GenAI SDK uses Client (not GoogleAI) as main entry point in version 1.5.0
+- [Phase 02-document-ingestion]: ProviderRegistration extension method replaces ProviderConfig singleton for testable env-var DI switching
+- [Phase 02-document-ingestion]: Api.Tests gains Worker ProjectReference to enable unit-testing of provider implementations
 
 ### Pending Todos
 
@@ -98,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T03:41:12.029Z
-Stopped at: Completed 02-03-PLAN.md (PPTX and PDF extraction TDD)
+Last session: 2026-03-18T03:46:43.307Z
+Stopped at: Completed 02-04-PLAN.md (LLM provider abstraction layer: interfaces, stubs, real providers, DI wiring)
 Resume file: None
