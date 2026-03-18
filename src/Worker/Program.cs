@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using StudyApp.Api.Data;
 using StudyApp.Api.Services;
 using StudyApp.Worker;
+using StudyApp.Worker.Extraction;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -33,6 +34,10 @@ builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(c =>
         c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Default"))));
 builder.Services.AddHangfireServer();
+
+// Extraction services
+builder.Services.AddScoped<IPptxExtractor, PptxExtractor>();
+builder.Services.AddScoped<IPdfExtractor, PdfExtractor>();
 
 // Provider selection via env vars (LLM-03)
 // Actual provider implementations registered in plan 02-05
