@@ -40,10 +40,7 @@ builder.Services.AddScoped<IPptxExtractor, PptxExtractor>();
 builder.Services.AddScoped<IPdfExtractor, PdfExtractor>();
 
 // Provider selection via env vars (LLM-03)
-// Actual provider implementations registered in plan 02-05
-var visionProvider = builder.Configuration["VISION_PROVIDER"] ?? "stub";
-var generationProvider = builder.Configuration["GENERATION_PROVIDER"] ?? "stub";
-builder.Services.AddSingleton(new ProviderConfig(visionProvider, generationProvider));
+builder.Services.AddProviders(builder.Configuration);
 
 builder.Services.AddHostedService<Worker>();
 
