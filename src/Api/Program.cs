@@ -4,6 +4,7 @@ using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using StudyApp.Api.Auth;
 using StudyApp.Api.Data;
+using StudyApp.Api.Services;
 using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +51,7 @@ builder.Services.AddSingleton<IAmazonS3>(_ =>
         s3Config
     );
 });
+builder.Services.AddScoped<IStorageService, S3StorageService>();
 
 var app = builder.Build();
 
