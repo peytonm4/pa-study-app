@@ -9,6 +9,8 @@ export interface Module {
 
 export interface ModuleDetail extends Module {
   documents: import('./documents').DocumentStatus[];
+  extractionStatus: 'NotStarted' | 'Queued' | 'Processing' | 'Ready' | 'Failed';
+  docxS3Key: string | null;
 }
 
 export const modules = {
