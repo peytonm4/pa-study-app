@@ -56,9 +56,10 @@ builder.Services.AddScoped<IStorageService, S3StorageService>();
 var app = builder.Build();
 
 // Apply EF migrations on API startup (Development convenience — not for production)
-// Only the API applies migrations; Worker assumes schema exists
-using (var scope = app.Services.CreateScope())
+// Skipped in Testing environment to allow in-memory DB in integration tests
+if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }

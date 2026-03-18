@@ -24,4 +24,9 @@
     <ProjectReference Include="..\Worker\StudyApp.Worker.csproj" />
   </ItemGroup>
 
+  <!-- EF InMemory for integration tests -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.5" />
+  </ItemGroup>
+
 </Project>
