@@ -1,3 +1,5 @@
+using StudyApp.Api.Skills;
+
 namespace StudyApp.Worker.Skills;
 
 public class StubSkillRunner : ISkillRunner

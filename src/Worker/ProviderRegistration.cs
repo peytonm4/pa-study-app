@@ -3,6 +3,7 @@ using Google.GenAI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StudyApp.Api.Providers;
+using StudyApp.Api.Skills;
 using StudyApp.Worker.Providers;
 using StudyApp.Worker.Skills;
 

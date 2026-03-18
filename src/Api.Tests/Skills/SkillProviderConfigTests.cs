@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StudyApp.Api.Skills;
 using StudyApp.Worker;
 using StudyApp.Worker.Skills;
 

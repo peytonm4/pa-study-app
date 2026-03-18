@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using StudyApp.Api.Skills;
 
 namespace StudyApp.Worker.Skills;
 

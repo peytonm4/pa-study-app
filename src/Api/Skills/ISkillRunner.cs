@@ -1,4 +1,4 @@
-namespace StudyApp.Worker.Skills;
+namespace StudyApp.Api.Skills;
 
 public interface ISkillRunner
 {

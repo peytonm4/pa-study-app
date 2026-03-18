@@ -1,12 +1,167 @@
-using Xunit;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using StudyApp.Api.Data;
+using StudyApp.Api.Jobs;
+using StudyApp.Api.Models;
+using StudyApp.Api.Skills;
 
 namespace StudyApp.Api.Tests.Extraction;
 
+/// <summary>
+/// Stub ISkillRunner that returns the canonical sections JSON for lecture_extractor paths.
+/// </summary>
+public class LectureExtractionStubSkillRunner : ISkillRunner
+{
+    public List<(string ScriptPath, string InputJson)> Calls { get; } = [];
+
+    public Task<string> RunAsync(string scriptPath, string inputJson, CancellationToken ct = default)
+    {
+        Calls.Add((scriptPath, inputJson));
+        return Task.FromResult("""
+            {"sections":[{"level":1,"heading":"Overview","content":"Stub overview content for testing purposes.","pages":[1,2],"figures":[]},{"level":2,"heading":"Key Concepts","content":"Stub key concepts content.","pages":[3],"figures":["stub-fig-1"]}],"docx_filename":"stub_lecture.docx"}
+            """);
+    }
+}
+
+/// <summary>
+/// Stub IStorageService that tracks Upload calls without hitting MinIO.
+/// </summary>
+public class LectureExtractionStubStorage : StudyApp.Api.Services.IStorageService
+{
+    public List<(string Key, string ContentType)> UploadCalls { get; } = [];
+
+    public Task<string> UploadAsync(Stream stream, string key, string contentType, CancellationToken ct = default)
+    {
+        UploadCalls.Add((key, contentType));
+        return Task.FromResult(key);
+    }
+
+    public Task DeleteAsync(string key, CancellationToken ct = default) => Task.CompletedTask;
+
+    public Task<Stream> DownloadAsync(string key, CancellationToken ct = default)
+        => Task.FromResult<Stream>(new MemoryStream());
+}
+
 public class LectureExtractionJobTests
 {
-    [Fact(Skip = "Wave 0 stub — implement in plan 03")]
-    public void Execute_ParsesSectionsJson_InsertsSectionRows() { }
+    private static AppDbContext CreateInMemoryDb()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase($"LectureJobTests-{Guid.NewGuid()}")
+            .Options;
+        return new AppDbContext(options);
+    }
 
-    [Fact(Skip = "Wave 0 stub — implement in plan 03")]
-    public void Execute_BuildsDocx_UploadsToS3() { }
+    private static IConfiguration CreateConfig()
+        => new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Skills:BasePath"] = "/skills"
+            })
+            .Build();
+
+    [Fact]
+    public async Task Execute_ParsesSectionsJson_InsertsSectionRows()
+    {
+        // Arrange
+        using var db = CreateInMemoryDb();
+        var moduleId = Guid.NewGuid();
+        db.Modules.Add(new Module
+        {
+            Id = moduleId,
+            UserId = Guid.NewGuid(),
+            Name = "Test Module",
+            ExtractionStatus = ExtractionStatus.Queued
+        });
+        await db.SaveChangesAsync();
+
+        var skillRunner = new LectureExtractionStubSkillRunner();
+        var storage = new LectureExtractionStubStorage();
+        var config = CreateConfig();
+        var job = new LectureExtractionJob(db, skillRunner, storage, config);
+
+        // Act
+        await job.Execute(moduleId);
+
+        // Assert — 2 sections inserted
+        Assert.Equal(2, db.Sections.Count());
+
+        var sections = db.Sections.OrderBy(s => s.SortOrder).ToList();
+        Assert.Equal(1, sections[0].HeadingLevel);
+        Assert.Equal("Overview", sections[0].HeadingText);
+        Assert.Equal(0, sections[0].SortOrder);
+        Assert.Equal(2, sections[1].HeadingLevel);
+        Assert.Equal("Key Concepts", sections[1].HeadingText);
+        Assert.Equal(1, sections[1].SortOrder);
+    }
+
+    [Fact]
+    public async Task Execute_BuildsDocx_UploadsToS3()
+    {
+        // Arrange
+        using var db = CreateInMemoryDb();
+        var moduleId = Guid.NewGuid();
+        db.Modules.Add(new Module
+        {
+            Id = moduleId,
+            UserId = Guid.NewGuid(),
+            Name = "Test Module",
+            ExtractionStatus = ExtractionStatus.Queued
+        });
+        await db.SaveChangesAsync();
+
+        var skillRunner = new LectureExtractionStubSkillRunner();
+        var storage = new LectureExtractionStubStorage();
+        var config = CreateConfig();
+        var job = new LectureExtractionJob(db, skillRunner, storage, config);
+
+        // Act
+        await job.Execute(moduleId);
+
+        // Assert — module status is Ready, DocxS3Key set
+        var module = await db.Modules.FindAsync(moduleId);
+        Assert.NotNull(module);
+        Assert.Equal(ExtractionStatus.Ready, module.ExtractionStatus);
+        Assert.False(string.IsNullOrEmpty(module.DocxS3Key));
+
+        // Storage upload was called
+        Assert.Single(storage.UploadCalls);
+        Assert.Contains("lecture.docx", storage.UploadCalls[0].Key);
+    }
+
+    [Fact]
+    public async Task Execute_OnException_SetsFailedStatus()
+    {
+        // Arrange
+        using var db = CreateInMemoryDb();
+        var moduleId = Guid.NewGuid();
+        db.Modules.Add(new Module
+        {
+            Id = moduleId,
+            UserId = Guid.NewGuid(),
+            Name = "Test Module",
+            ExtractionStatus = ExtractionStatus.Queued
+        });
+        await db.SaveChangesAsync();
+
+        // Skill runner that throws
+        var failingRunner = new FailingSkillRunner();
+        var storage = new LectureExtractionStubStorage();
+        var config = CreateConfig();
+        var job = new LectureExtractionJob(db, failingRunner, storage, config);
+
+        // Act & Assert — exception is rethrown
+        await Assert.ThrowsAsync<InvalidOperationException>(() => job.Execute(moduleId));
+
+        var module = await db.Modules.FindAsync(moduleId);
+        Assert.NotNull(module);
+        Assert.Equal(ExtractionStatus.Failed, module.ExtractionStatus);
+        Assert.False(string.IsNullOrEmpty(module.ExtractionError));
+    }
+}
+
+public class FailingSkillRunner : ISkillRunner
+{
+    public Task<string> RunAsync(string scriptPath, string inputJson, CancellationToken ct = default)
+        => throw new InvalidOperationException("Skill runner failed");
 }
