@@ -96,5 +96,11 @@ public class IngestionJob(
         {
             jobClient.Enqueue<VisionExtractionJob>(j => j.Execute(documentId, page.PageNumber));
         }
+
+        // Enqueue figure extraction when document is already Ready (no vision jobs needed)
+        if (flaggedPages.Count == 0)
+        {
+            jobClient.Enqueue<FigureExtractionJob>(j => j.Execute(documentId, CancellationToken.None));
+        }
     }
 }

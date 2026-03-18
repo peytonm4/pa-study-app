@@ -47,6 +47,8 @@ builder.Services.AddProviders(builder.Configuration);
 // Hangfire jobs — registered so Hangfire can resolve via DI
 builder.Services.AddScoped<IngestionJob>();
 builder.Services.AddScoped<VisionExtractionJob>();
+builder.Services.AddScoped<FigureExtractionJob>();
+builder.Services.AddScoped<LectureExtractionJob>();
 
 builder.Services.AddHostedService<Worker>();
 

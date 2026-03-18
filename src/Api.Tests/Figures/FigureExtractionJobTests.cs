@@ -5,7 +5,7 @@ using StudyApp.Api.Jobs;
 using StudyApp.Api.Models;
 using StudyApp.Api.Providers;
 using StudyApp.Api.Services;
-using StudyApp.Worker.Skills;
+using StudyApp.Api.Skills;
 
 namespace StudyApp.Api.Tests.Figures;
 
