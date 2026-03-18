@@ -49,7 +49,16 @@ Plans:
   3. Each slide and page becomes a chunk with file name and slide/page number metadata attached
   4. Vision extraction (Gemini) runs on flagged PDF pages without manual intervention
   5. Content generation providers (Claude, Gemini, Stub) are selectable via environment variable with no code changes
-**Plans**: TBD
+**Plans**: 7 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — NuGet packages, EF entities (Module/Document/Chunk), migration, Wave 0 test stubs
+- [ ] 02-02-PLAN.md — IStorageService, ModulesController, DocumentsController, Worker Hangfire wiring
+- [ ] 02-03-PLAN.md — TDD: PptxExtractor (OpenXML) and PdfExtractor (PdfPig)
+- [ ] 02-04-PLAN.md — TDD: IVisionProvider/IGenerationProvider interfaces, stub and real provider implementations
+- [ ] 02-05-PLAN.md — IngestionJob and VisionExtractionJob Hangfire jobs; upload integration test
+- [ ] 02-06-PLAN.md — React frontend: ModuleListPage, ModuleDetailPage, routing, status polling
+- [ ] 02-07-PLAN.md — Human verification: end-to-end pipeline confirmation
 
 ### Phase 3: Objectives and Figures
 **Goal**: User completes the input pipeline — objectives pasted and figures reviewed — before generation begins
@@ -93,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-03-17 |
-| 2. Document Ingestion | 0/TBD | Not started | - |
+| 2. Document Ingestion | 0/7 | Not started | - |
 | 3. Objectives and Figures | 0/TBD | Not started | - |
 | 4. Content Generation | 0/TBD | Not started | - |
 | 5. Study Experience | 0/TBD | Not started | - |
