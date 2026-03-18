@@ -8,6 +8,9 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Module> Modules => Set<Module>();
+    public DbSet<Document> Documents => Set<Document>();
+    public DbSet<Chunk> Chunks => Set<Chunk>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +29,34 @@ public class AppDbContext : DbContext
                 Email = "dev@local",
                 CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             });
+        });
+
+        modelBuilder.Entity<Module>(entity =>
+        {
+            entity.HasKey(m => m.Id);
+            entity.Property(m => m.Name).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<Document>(entity =>
+        {
+            entity.HasKey(d => d.Id);
+            entity.Property(d => d.FileName).HasMaxLength(500);
+            entity.Property(d => d.Status)
+                  .HasConversion<string>();
+            entity.HasOne(d => d.Module)
+                  .WithMany(m => m.Documents)
+                  .HasForeignKey(d => d.ModuleId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Chunk>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.FileName).HasMaxLength(500);
+            entity.HasOne(c => c.Document)
+                  .WithMany(d => d.Chunks)
+                  .HasForeignKey(c => c.DocumentId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
