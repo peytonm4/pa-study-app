@@ -7,5 +7,10 @@ public class Module
     public string Name { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public ExtractionStatus ExtractionStatus { get; set; } = ExtractionStatus.NotStarted;
+    public string? DocxS3Key { get; set; }
+    public string? ExtractionError { get; set; }
+
     public ICollection<Document> Documents { get; set; } = [];
+    public ICollection<Section> Sections { get; set; } = [];
 }

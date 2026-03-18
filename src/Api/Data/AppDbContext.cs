@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
     public DbSet<Module> Modules => Set<Module>();
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<Chunk> Chunks => Set<Chunk>();
+    public DbSet<Figure> Figures => Set<Figure>();
+    public DbSet<Section> Sections => Set<Section>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +37,7 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(m => m.Id);
             entity.Property(m => m.Name).HasMaxLength(200);
+            entity.Property(m => m.ExtractionStatus).HasConversion<string>();
         });
 
         modelBuilder.Entity<Document>(entity =>
@@ -56,6 +59,25 @@ public class AppDbContext : DbContext
             entity.HasOne(c => c.Document)
                   .WithMany(d => d.Chunks)
                   .HasForeignKey(c => c.DocumentId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Figure>(entity =>
+        {
+            entity.HasKey(f => f.Id);
+            entity.Property(f => f.S3Key).HasMaxLength(1000);
+            entity.HasOne(f => f.Document)
+                  .WithMany(d => d.Figures)
+                  .HasForeignKey(f => f.DocumentId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Section>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+            entity.HasOne(s => s.Module)
+                  .WithMany(m => m.Sections)
+                  .HasForeignKey(s => s.ModuleId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
     }

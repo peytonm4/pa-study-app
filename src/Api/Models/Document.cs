@@ -14,4 +14,5 @@ public class Document
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Chunk> Chunks { get; set; } = [];
+    public ICollection<Figure> Figures { get; set; } = [];
 }
