@@ -120,6 +120,14 @@ Recent decisions affecting current work:
 - [Phase 03-objectives-and-figures]: ISkillRunner moved from Worker.Skills to Api.Skills — Worker already references Api, so Api.Skills avoids circular project dependency
 - [Phase 03-objectives-and-figures]: POST /extract returns 409 if ExtractionStatus not in NotStarted/Failed — prevents duplicate job enqueue
 - [Phase 03-objectives-and-figures]: figures.ts API client mirrors documents.ts pattern; ModuleDetailPage extended with FigureCard grid, Keep/Ignore toggles, extraction polling, and download button
+- [Phase 03-objectives-and-figures][BUG FIX]: API had AddHangfireServer() — removed; only Worker should execute jobs (API lacked IPptxExtractor DI)
+- [Phase 03-objectives-and-figures][BUG FIX]: VisionExtractionJob used FindAsync after ExecuteUpdateAsync — EF tracking cache returned stale PendingVisionJobs; fixed with AsNoTracking query
+- [Phase 03-objectives-and-figures][BUG FIX]: VisionExtractionJob never enqueued FigureExtractionJob after last vision job completed — added enqueue call
+- [Phase 03-objectives-and-figures][BUG FIX]: FiguresController had [Route("api")] prefix — mismatched frontend /modules/{id}/figures calls; changed to [Route("")]
+- [Phase 03-objectives-and-figures][BUG FIX]: ModulesController GET detail never returned ExtractionStatus or DocxS3Key — frontend always saw NotStarted
+- [Phase 03-objectives-and-figures][BUG FIX]: setDevUserId() was never called at app startup — all API calls returned 401; added call in main.tsx
+- [Phase 03-objectives-and-figures][BUG FIX]: MinIO studyapp bucket did not exist — S3 uploads silently failed before Hangfire enqueue; bucket created
+- [Phase 03-objectives-and-figures]: Thumbnail endpoint returns SVG placeholder for stub/ S3 keys and on download failure — avoids broken images in stub mode
 
 ### Pending Todos
 
@@ -131,6 +139,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-18T20:50:44.540Z
-Stopped at: Completed 03-06-PLAN.md — figures.ts API client, ModuleDetailPage figure review and extraction UI
+Last session: 2026-03-19T00:45:00.000Z
+Stopped at: Phase 3 all 6 plans executed; 03-07 human verification in progress — fixing live bugs during manual testing
 Resume file: None

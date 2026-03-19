@@ -10,11 +10,11 @@ using StudyApp.Api.Services;
 namespace StudyApp.Api.Controllers;
 
 [ApiController]
-[Route("api")]
+[Route("")]
 [Authorize]
 public class FiguresController(AppDbContext db, IStorageService storage, IBackgroundJobClient jobClient) : ControllerBase
 {
-    // GET /api/modules/{moduleId}/figures
+    // GET /modules/{moduleId}/figures
     [HttpGet("modules/{moduleId:guid}/figures")]
     public async Task<IActionResult> GetModuleFigures(Guid moduleId)
     {
@@ -26,7 +26,7 @@ public class FiguresController(AppDbContext db, IStorageService storage, IBackgr
             .Where(f => f.Document.ModuleId == moduleId)
             .Select(f => new FigureDto(
                 f.Id,
-                $"/api/figures/{f.Id}/thumbnail",
+                $"/figures/{f.Id}/thumbnail",
                 f.PageNumber,
                 f.Keep,
                 f.LabelType,
@@ -48,7 +48,7 @@ public class FiguresController(AppDbContext db, IStorageService storage, IBackgr
 
         return Ok(new FigureDto(
             figure.Id,
-            $"/api/figures/{figure.Id}/thumbnail",
+            $"/figures/{figure.Id}/thumbnail",
             figure.PageNumber,
             figure.Keep,
             figure.LabelType,
@@ -62,8 +62,23 @@ public class FiguresController(AppDbContext db, IStorageService storage, IBackgr
         var figure = await db.Figures.FindAsync(id);
         if (figure is null) return NotFound();
 
-        var stream = await storage.DownloadAsync(figure.S3Key);
-        return File(stream, "image/png");
+        // Stub keys don't exist in S3 — return a placeholder SVG
+        if (figure.S3Key.StartsWith("stub/"))
+        {
+            var svg = $"<svg xmlns='http://www.w3.org/2000/svg' width='200' height='150'><rect width='200' height='150' fill='#e2e8f0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='14' fill='#64748b'>Figure {id.ToString()[..4]}</text></svg>";
+            return Content(svg, "image/svg+xml");
+        }
+
+        try
+        {
+            var stream = await storage.DownloadAsync(figure.S3Key);
+            return File(stream, "image/png");
+        }
+        catch
+        {
+            var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='150'><rect width='200' height='150' fill='#e2e8f0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='14' fill='#64748b'>Preview unavailable</text></svg>";
+            return Content(svg, "image/svg+xml");
+        }
     }
 
     // POST /api/modules/{moduleId}/extract
@@ -103,7 +118,7 @@ public class FiguresController(AppDbContext db, IStorageService storage, IBackgr
                 Detail = $"Module extraction status is {module.ExtractionStatus}."
             });
 
-        return Ok(new { url = $"/api/modules/{moduleId}/docx/download" });
+        return Ok(new { url = $"/modules/{moduleId}/docx/download" });
     }
 
     // GET /api/modules/{moduleId}/docx/download

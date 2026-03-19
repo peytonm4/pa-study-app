@@ -92,6 +92,8 @@ public class ModulesController : ControllerBase
             module.Name,
             Status = ComputeStatus(module),
             module.CreatedAt,
+            ExtractionStatus = module.ExtractionStatus.ToString(),
+            module.DocxS3Key,
             Documents = module.Documents.Select(d => new
             {
                 d.Id,

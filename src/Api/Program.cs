@@ -31,11 +31,10 @@ builder.Services
     .AddScheme<AuthenticationSchemeOptions, DevAuthHandler>("DevAuth", null);
 builder.Services.AddAuthorization();
 
-// Hangfire — Postgres storage
+// Hangfire — Postgres storage (API only enqueues jobs, Worker executes them)
 builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(c =>
         c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Default"))));
-builder.Services.AddHangfireServer();
 
 // S3-compatible storage — works with MinIO locally via ForcePathStyle
 builder.Services.AddSingleton<IAmazonS3>(_ =>

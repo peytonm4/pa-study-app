@@ -10,7 +10,8 @@ namespace StudyApp.Api.Jobs;
 public class VisionExtractionJob(
     IVisionProvider visionProvider,
     IStorageService storage,
-    AppDbContext db)
+    AppDbContext db,
+    IBackgroundJobClient jobClient)
 {
     [AutomaticRetry(Attempts = 3)]
     public async Task Execute(Guid documentId, int pageNumber)
@@ -48,12 +49,16 @@ public class VisionExtractionJob(
             .Where(d => d.Id == documentId)
             .ExecuteUpdateAsync(s => s.SetProperty(d => d.PendingVisionJobs, d => d.PendingVisionJobs - 1));
 
-        // Re-fetch to check if this was the last vision job
-        var updatedDoc = await db.Documents.FindAsync(documentId);
+        // Re-fetch fresh from DB (ExecuteUpdateAsync bypasses EF tracking cache)
+        var updatedDoc = await db.Documents
+            .AsNoTracking()
+            .FirstOrDefaultAsync(d => d.Id == documentId);
         if (updatedDoc is not null && updatedDoc.PendingVisionJobs == 0)
         {
-            updatedDoc.Status = DocumentStatus.Ready;
-            await db.SaveChangesAsync();
+            await db.Documents
+                .Where(d => d.Id == documentId)
+                .ExecuteUpdateAsync(s => s.SetProperty(d => d.Status, DocumentStatus.Ready));
+            jobClient.Enqueue<FigureExtractionJob>(j => j.Execute(documentId, CancellationToken.None));
         }
     }
 }

@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import App from './App';
+import { setDevUserId } from './api/client';
 import './index.css';
+
+setDevUserId(import.meta.env.VITE_DEV_USER_ID ?? '00000000-0000-0000-0000-000000000001');
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 5 * 60 * 1000, retry: 1 } },
