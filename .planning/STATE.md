@@ -3,15 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-06-PLAN.md — figures.ts API client, ModuleDetailPage figure review and extraction UI
-last_updated: "2026-03-18T20:50:44.544Z"
-last_activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
+stopped_at: Phase 4 context gathered
+last_updated: "2026-03-25T03:59:23.006Z"
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 19
-  completed_plans: 18
-  percent: 0
+  completed_plans: 19
+  percent: 60
 ---
 
 # Project State
@@ -21,34 +20,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Every piece of generated content must be traceable to uploaded source material — if it isn't in the sources, the app says so rather than hallucinating.
-**Current focus:** Phase 3 - Figures and Lecture Extraction
+**Current focus:** Phase 4 - Study Material Generation (next)
 **GitHub:** https://github.com/peytonm4/pa-study-app
 
 ## Current Position
 
-Phase: 1 of 5 (Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-16 — Roadmap created, ready to plan Phase 1
+Phase: 3 of 5 (Figures and Lecture Extraction) — **COMPLETE**
+Plan: 7 of 7 — all plans executed and human-verified
+Status: Ready to plan Phase 4
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
-
-**Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| - | - | - | - |
-
-**Recent Trend:**
-- Last 5 plans: -
-- Trend: -
 
 *Updated after each plan completion*
 | Phase 01-foundation P02 | 7 | 2 tasks | 11 files |
@@ -69,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-objectives-and-figures P04 | 5min | 2 tasks | 6 files |
 | Phase 03-objectives-and-figures P05 | 35min | 2 tasks | 9 files |
 | Phase 03-objectives-and-figures P06 | 2min | 2 tasks | 3 files |
+| Phase 03-objectives-and-figures P07 | human verify | 8 bugs fixed | 5 files |
 
 ## Accumulated Context
 
@@ -128,17 +112,36 @@ Recent decisions affecting current work:
 - [Phase 03-objectives-and-figures][BUG FIX]: setDevUserId() was never called at app startup — all API calls returned 401; added call in main.tsx
 - [Phase 03-objectives-and-figures][BUG FIX]: MinIO studyapp bucket did not exist — S3 uploads silently failed before Hangfire enqueue; bucket created
 - [Phase 03-objectives-and-figures]: Thumbnail endpoint returns SVG placeholder for stub/ S3 keys and on download failure — avoids broken images in stub mode
+- [Phase 03-objectives-and-figures][BUG FIX]: Integration test routes used /api/ prefix — controllers have no prefix; all 5 fixed tests now pass
+- [Phase 03-objectives-and-figures][BUG FIX]: Figures/extraction sections shown on empty module — gated on mod.documents.length > 0
+- [Phase 03-objectives-and-figures][BUG FIX]: FigureExtractionJob crashed downloading stub/fig1.png — skip stub/ keys in caption loop; catch other S3 failures
+- [Phase 03-objectives-and-figures][BUG FIX]: Figures query had no refetchInterval — stale empty cache after page load before jobs ran; added 5s polling until figures appear
+- [Phase 03-objectives-and-figures][BUG FIX]: Download URL opened relative to frontend (:5173) not API (:5159) — prefixed with VITE_API_URL
+- [Phase 03-objectives-and-figures]: Figure image previews removed from FigureCard — stub SVGs add no value
+- [Phase 03-objectives-and-figures][BUG FIX]: IngestionJob threw on missing document (stale Hangfire jobs) — changed to early return
+- [Phase 03-objectives-and-figures][BUG FIX]: Run Extraction button not disabled for Ready status; 409 failures were silent — added isExtractionDone guard + onError display
+- [Phase 03-objectives-and-figures]: Phase 3 human-verified complete — full pipeline works end-to-end in stub mode
+- [Post-phase-3 fixes]: docx download changed from window.open to axios blob download to carry auth header
+- [Post-phase-3 fixes]: Module delete button added to ModuleListPage; delete cleans up figure S3 keys and docx
+- [Post-phase-3 fixes]: Document delete cancels active ExtractionRuns instead of resetting module fields
+- [Post-phase-3 fixes]: ExtractionRun entity introduced — ExtractionStatus/DocxS3Key/ExtractionError removed from Module; migration AddExtractionRunsTable applied
+- [Post-phase-3 fixes]: LectureExtractionJob now takes (moduleId, runId); replaces old sections on re-run; re-run allowed after Ready/Failed
+- [Post-phase-3 fixes]: Figures Review UI (Keep/Ignore cards) removed — auto-keep via has_caption heuristic; shows figure count only
+- [Post-phase-3 fixes]: Objectives confirmed permanently removed from scope — lecture extractor topic hierarchy is the organizational unit
+- [Post-phase-3 fixes]: StubFigureSkillRunner keys changed from stub/fig*.png to figures/fig*.png so caption path runs in unit tests (stub/ prefix is skipped in production)
+- [Post-phase-3 fixes]: 13 new tests added — ExtractionRun trigger logic (block on Queued/Processing, allow re-run after Ready), document delete (204, 404, cancels active runs), module CRUD (list, detail with run status, NotStarted default, create, delete); 54/55 pass (1 skipped by design)
+- [Post-phase-3 fixes]: Test isolation pattern established — each POST/DELETE test that mutates state uses a dedicated seeded resource; shared factories only used for read-only assertions
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-19T00:45:00.000Z
-Stopped at: Phase 3 all 6 plans executed; 03-07 human verification in progress — fixing live bugs during manual testing
-Resume file: None
+Last session: 2026-03-25T03:59:22.974Z
+Stopped at: Phase 4 context gathered
+Resume file: .planning/phases/04-content-generation/04-CONTEXT.md
