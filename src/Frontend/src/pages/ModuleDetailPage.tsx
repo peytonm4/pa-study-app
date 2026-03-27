@@ -1,9 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { modules } from '@/api/modules';
 import { documents, type DocumentStatus } from '@/api/documents';
-import { figures, type FigureDto } from '@/api/figures';
+import { figures } from '@/api/figures';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -79,38 +79,6 @@ function extractionStatusVariant(status: ExtractionStatus): 'default' | 'seconda
   return 'secondary';
 }
 
-function FigureCard({ fig, onToggle, isPending }: { fig: FigureDto; onToggle: (keep: boolean) => void; isPending: boolean }) {
-  return (
-    <div className="border rounded-md overflow-hidden bg-card">
-      <img
-        src={fig.s3ThumbnailUrl}
-        alt={`Page ${fig.pageNumber} figure`}
-        className="w-full h-40 object-cover bg-muted"
-      />
-      <div className="p-3 space-y-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          <Badge variant="secondary">Page {fig.pageNumber}</Badge>
-          {fig.labelType && (
-            <Badge variant="outline">{fig.labelType}</Badge>
-          )}
-        </div>
-        {fig.caption && (
-          <p className="text-xs text-muted-foreground line-clamp-2">{fig.caption}</p>
-        )}
-        <Button
-          variant={fig.keep ? 'default' : 'ghost'}
-          size="sm"
-          className="w-full"
-          onClick={() => onToggle(!fig.keep)}
-          disabled={isPending}
-        >
-          {fig.keep ? 'Keep' : 'Ignore'}
-        </Button>
-      </div>
-    </div>
-  );
-}
-
 export default function ModuleDetailPage() {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
@@ -126,10 +94,13 @@ export default function ModuleDetailPage() {
     },
   });
 
-  const { data: figuresList, isLoading: figuresLoading } = useQuery({
+  const { data: figuresList } = useQuery({
     queryKey: ['figures', id],
     queryFn: () => figures.list(id!),
     enabled: !!id,
+    refetchInterval: (query) => {
+      return (query.state.data?.length ?? 0) > 0 ? false : 5000;
+    },
   });
 
   const uploadMutation = useMutation({
@@ -139,15 +110,15 @@ export default function ModuleDetailPage() {
     },
   });
 
-  const toggleMutation = useMutation({
-    mutationFn: ({ figureId, keep }: { figureId: string; keep: boolean }) =>
-      figures.toggle(figureId, keep),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['figures', id] }),
-  });
-
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [extractionError, setExtractionError] = useState<string | null>(null);
   const runExtractionMutation = useMutation({
     mutationFn: () => figures.runExtraction(id!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['module', id] }),
+    onSuccess: () => {
+      setExtractionError(null);
+      queryClient.invalidateQueries({ queryKey: ['module', id] });
+    },
+    onError: (err: Error) => setExtractionError(err.message),
   });
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -158,14 +129,18 @@ export default function ModuleDetailPage() {
   }
 
   async function handleDownload() {
-    const data = await figures.getDocxDownloadUrl(id!);
-    window.open(data.url, '_blank');
+    try {
+      setDownloadError(null);
+      await figures.downloadDocx(id!);
+    } catch (err: unknown) {
+      setDownloadError(err instanceof Error ? err.message : 'Download failed');
+    }
   }
 
   const extractionStatus = mod?.extractionStatus ?? 'NotStarted';
   const isExtractionRunning = extractionStatus === 'Queued' || extractionStatus === 'Processing';
-  const hasFigures = (figuresList?.length ?? 0) > 0;
-  const hasReviewedFigure = figuresList?.some(f => f.keep !== undefined) ?? false;
+  const figureCount = figuresList?.length ?? 0;
+  const keptFigureCount = figuresList?.filter(f => f.keep).length ?? 0;
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
@@ -208,64 +183,52 @@ export default function ModuleDetailPage() {
             </ul>
           )}
 
-          {/* Figures Review Section */}
-          <div className="mt-10">
-            <h2 className="text-xl font-semibold mb-4">Figures Review</h2>
+          {/* Lecture Extraction Section — only shown once documents exist */}
+          {mod.documents.length > 0 && (
+            <div className="mt-10">
+              <h2 className="text-xl font-semibold mb-4">Lecture Extraction</h2>
 
-            {figuresLoading && (
-              <p className="text-muted-foreground">Loading figures...</p>
-            )}
+              {figureCount > 0 && (
+                <p className="text-sm text-muted-foreground mb-4">
+                  {keptFigureCount} of {figureCount} figures included
+                </p>
+              )}
 
-            {!figuresLoading && !hasFigures && (
-              <p className="text-muted-foreground">No figures extracted yet.</p>
-            )}
-
-            {!figuresLoading && hasFigures && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {figuresList!.map(fig => (
-                  <FigureCard
-                    key={fig.id}
-                    fig={fig}
-                    onToggle={(keep) => toggleMutation.mutate({ figureId: fig.id, keep })}
-                    isPending={toggleMutation.isPending}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Lecture Extraction Section */}
-          <div className="mt-10">
-            <h2 className="text-xl font-semibold mb-4">Lecture Extraction</h2>
-
-            <div className="flex items-center gap-4 mb-4">
-              <span className="text-sm text-muted-foreground">Status:</span>
-              <Badge variant={extractionStatusVariant(extractionStatus)}>
-                {extractionStatus}
-                {isExtractionRunning && (
-                  <span className="ml-1 inline-block h-2 w-2 rounded-full bg-current animate-pulse" />
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-sm text-muted-foreground">Status:</span>
+                <Badge variant={extractionStatusVariant(extractionStatus)}>
+                  {extractionStatus}
+                  {isExtractionRunning && (
+                    <span className="ml-1 inline-block h-2 w-2 rounded-full bg-current animate-pulse" />
+                  )}
+                </Badge>
+                {extractionStatus === 'Failed' && (
+                  <span className="text-xs text-destructive">Extraction failed. Try again.</span>
                 )}
-              </Badge>
-              {extractionStatus === 'Failed' && (
-                <span className="text-xs text-destructive">Extraction failed. Try again.</span>
-              )}
-            </div>
+              </div>
 
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={() => runExtractionMutation.mutate()}
-                disabled={isExtractionRunning || !hasFigures || !hasReviewedFigure || runExtractionMutation.isPending}
-              >
-                {runExtractionMutation.isPending ? 'Starting...' : 'Run Extraction'}
-              </Button>
-
-              {extractionStatus === 'Ready' && (
-                <Button variant="outline" onClick={handleDownload}>
-                  Download Lecture (.docx)
+              <div className="flex items-center gap-3">
+                <Button
+                  onClick={() => runExtractionMutation.mutate()}
+                  disabled={isExtractionRunning || runExtractionMutation.isPending}
+                >
+                  {runExtractionMutation.isPending ? 'Starting...' : 'Run Extraction'}
                 </Button>
+
+                {extractionStatus === 'Ready' && (
+                  <Button variant="outline" onClick={handleDownload}>
+                    Download Lecture (.docx)
+                  </Button>
+                )}
+              </div>
+              {extractionError && (
+                <p className="text-sm text-destructive mt-2">{extractionError}</p>
+              )}
+              {downloadError && (
+                <p className="text-sm text-destructive mt-2">Download failed: {downloadError}</p>
               )}
             </div>
-          </div>
+          )}
         </>
       )}
     </div>

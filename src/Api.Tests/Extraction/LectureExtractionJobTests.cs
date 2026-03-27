@@ -60,30 +60,25 @@ public class LectureExtractionJobTests
             })
             .Build();
 
+    private static (Guid moduleId, Guid runId) SeedModuleAndRun(AppDbContext db)
+    {
+        var moduleId = Guid.NewGuid();
+        var runId = Guid.NewGuid();
+        db.Modules.Add(new Module { Id = moduleId, UserId = Guid.NewGuid(), Name = "Test Module" });
+        db.ExtractionRuns.Add(new ExtractionRun { Id = runId, ModuleId = moduleId, Status = ExtractionStatus.Queued });
+        db.SaveChanges();
+        return (moduleId, runId);
+    }
+
     [Fact]
     public async Task Execute_ParsesSectionsJson_InsertsSectionRows()
     {
-        // Arrange
         using var db = CreateInMemoryDb();
-        var moduleId = Guid.NewGuid();
-        db.Modules.Add(new Module
-        {
-            Id = moduleId,
-            UserId = Guid.NewGuid(),
-            Name = "Test Module",
-            ExtractionStatus = ExtractionStatus.Queued
-        });
-        await db.SaveChangesAsync();
+        var (moduleId, runId) = SeedModuleAndRun(db);
 
-        var skillRunner = new LectureExtractionStubSkillRunner();
-        var storage = new LectureExtractionStubStorage();
-        var config = CreateConfig();
-        var job = new LectureExtractionJob(db, skillRunner, storage, config);
+        var job = new LectureExtractionJob(db, new LectureExtractionStubSkillRunner(), new LectureExtractionStubStorage(), CreateConfig());
+        await job.Execute(moduleId, runId);
 
-        // Act
-        await job.Execute(moduleId);
-
-        // Assert — 2 sections inserted
         Assert.Equal(2, db.Sections.Count());
 
         var sections = db.Sections.OrderBy(s => s.SortOrder).ToList();
@@ -98,33 +93,18 @@ public class LectureExtractionJobTests
     [Fact]
     public async Task Execute_BuildsDocx_UploadsToS3()
     {
-        // Arrange
         using var db = CreateInMemoryDb();
-        var moduleId = Guid.NewGuid();
-        db.Modules.Add(new Module
-        {
-            Id = moduleId,
-            UserId = Guid.NewGuid(),
-            Name = "Test Module",
-            ExtractionStatus = ExtractionStatus.Queued
-        });
-        await db.SaveChangesAsync();
+        var (moduleId, runId) = SeedModuleAndRun(db);
 
-        var skillRunner = new LectureExtractionStubSkillRunner();
         var storage = new LectureExtractionStubStorage();
-        var config = CreateConfig();
-        var job = new LectureExtractionJob(db, skillRunner, storage, config);
+        var job = new LectureExtractionJob(db, new LectureExtractionStubSkillRunner(), storage, CreateConfig());
+        await job.Execute(moduleId, runId);
 
-        // Act
-        await job.Execute(moduleId);
+        var run = await db.ExtractionRuns.FindAsync(runId);
+        Assert.NotNull(run);
+        Assert.Equal(ExtractionStatus.Ready, run.Status);
+        Assert.False(string.IsNullOrEmpty(run.DocxS3Key));
 
-        // Assert — module status is Ready, DocxS3Key set
-        var module = await db.Modules.FindAsync(moduleId);
-        Assert.NotNull(module);
-        Assert.Equal(ExtractionStatus.Ready, module.ExtractionStatus);
-        Assert.False(string.IsNullOrEmpty(module.DocxS3Key));
-
-        // Storage upload was called
         Assert.Single(storage.UploadCalls);
         Assert.Contains("lecture.docx", storage.UploadCalls[0].Key);
     }
@@ -132,31 +112,16 @@ public class LectureExtractionJobTests
     [Fact]
     public async Task Execute_OnException_SetsFailedStatus()
     {
-        // Arrange
         using var db = CreateInMemoryDb();
-        var moduleId = Guid.NewGuid();
-        db.Modules.Add(new Module
-        {
-            Id = moduleId,
-            UserId = Guid.NewGuid(),
-            Name = "Test Module",
-            ExtractionStatus = ExtractionStatus.Queued
-        });
-        await db.SaveChangesAsync();
+        var (moduleId, runId) = SeedModuleAndRun(db);
 
-        // Skill runner that throws
-        var failingRunner = new FailingSkillRunner();
-        var storage = new LectureExtractionStubStorage();
-        var config = CreateConfig();
-        var job = new LectureExtractionJob(db, failingRunner, storage, config);
+        var job = new LectureExtractionJob(db, new FailingSkillRunner(), new LectureExtractionStubStorage(), CreateConfig());
+        await Assert.ThrowsAsync<InvalidOperationException>(() => job.Execute(moduleId, runId));
 
-        // Act & Assert — exception is rethrown
-        await Assert.ThrowsAsync<InvalidOperationException>(() => job.Execute(moduleId));
-
-        var module = await db.Modules.FindAsync(moduleId);
-        Assert.NotNull(module);
-        Assert.Equal(ExtractionStatus.Failed, module.ExtractionStatus);
-        Assert.False(string.IsNullOrEmpty(module.ExtractionError));
+        var run = await db.ExtractionRuns.FindAsync(runId);
+        Assert.NotNull(run);
+        Assert.Equal(ExtractionStatus.Failed, run.Status);
+        Assert.False(string.IsNullOrEmpty(run.ErrorMessage));
     }
 }
 

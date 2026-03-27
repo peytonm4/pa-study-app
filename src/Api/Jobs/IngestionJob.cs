@@ -20,8 +20,8 @@ public class IngestionJob(
     [AutomaticRetry(Attempts = 3)]
     public async Task Execute(Guid documentId)
     {
-        var document = await db.Documents.FindAsync(documentId)
-            ?? throw new InvalidOperationException($"Document {documentId} not found");
+        var document = await db.Documents.FindAsync(documentId);
+        if (document is null) return; // stale job — document was deleted
 
         document.Status = DocumentStatus.Processing;
         await db.SaveChangesAsync();

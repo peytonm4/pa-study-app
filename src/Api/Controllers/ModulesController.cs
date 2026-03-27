@@ -86,14 +86,18 @@ public class ModulesController : ControllerBase
 
         if (module is null) return NotFound();
 
+        var latestRun = await _db.ExtractionRuns
+            .Where(r => r.ModuleId == id)
+            .OrderByDescending(r => r.CreatedAt)
+            .FirstOrDefaultAsync();
+
         return Ok(new
         {
             module.Id,
             module.Name,
             Status = ComputeStatus(module),
             module.CreatedAt,
-            ExtractionStatus = module.ExtractionStatus.ToString(),
-            module.DocxS3Key,
+            ExtractionStatus = latestRun?.Status.ToString() ?? "NotStarted",
             Documents = module.Documents.Select(d => new
             {
                 d.Id,
@@ -111,6 +115,7 @@ public class ModulesController : ControllerBase
         var userId = CurrentUserId;
         var module = await _db.Modules
             .Include(m => m.Documents)
+                .ThenInclude(d => d.Figures)
             .FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId);
 
         if (module is null) return NotFound();
@@ -118,7 +123,22 @@ public class ModulesController : ControllerBase
         foreach (var doc in module.Documents)
         {
             try { await _storage.DeleteAsync(doc.S3Key); }
-            catch { /* log but don't fail delete if S3 key missing */ }
+            catch { }
+            foreach (var figure in doc.Figures)
+            {
+                try { await _storage.DeleteAsync(figure.S3Key); }
+                catch { }
+            }
+        }
+
+        var runs = await _db.ExtractionRuns.Where(r => r.ModuleId == id).ToListAsync();
+        foreach (var run in runs)
+        {
+            if (!string.IsNullOrEmpty(run.DocxS3Key))
+            {
+                try { await _storage.DeleteAsync(run.DocxS3Key); }
+                catch { }
+            }
         }
 
         _db.Modules.Remove(module);

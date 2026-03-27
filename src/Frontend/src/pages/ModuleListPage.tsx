@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { modules } from '@/api/modules';
+import { modules, type Module } from '@/api/modules';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,11 @@ export default function ModuleListPage() {
       queryClient.invalidateQueries({ queryKey: ['modules'] });
       setName('');
     },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => modules.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['modules'] }),
   });
 
   function handleSubmit(e: React.FormEvent) {
@@ -66,6 +71,14 @@ export default function ModuleListPage() {
                 <span className="text-sm text-muted-foreground">
                   {new Date(mod.createdAt).toLocaleDateString()}
                 </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={deleteMutation.isPending}
+                  onClick={() => deleteMutation.mutate(mod.id)}
+                >
+                  Delete
+                </Button>
               </div>
             </li>
           ))}

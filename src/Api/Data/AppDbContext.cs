@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Chunk> Chunks => Set<Chunk>();
     public DbSet<Figure> Figures => Set<Figure>();
     public DbSet<Section> Sections => Set<Section>();
+    public DbSet<ExtractionRun> ExtractionRuns => Set<ExtractionRun>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,7 +38,16 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(m => m.Id);
             entity.Property(m => m.Name).HasMaxLength(200);
-            entity.Property(m => m.ExtractionStatus).HasConversion<string>();
+        });
+
+        modelBuilder.Entity<ExtractionRun>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Status).HasConversion<string>();
+            entity.HasOne(r => r.Module)
+                  .WithMany(m => m.ExtractionRuns)
+                  .HasForeignKey(r => r.ModuleId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Document>(entity =>

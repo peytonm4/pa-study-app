@@ -36,7 +36,7 @@ public class FiguresController(AppDbContext db, IStorageService storage, IBackgr
         return Ok(figures);
     }
 
-    // PATCH /api/figures/{id}
+    // PATCH /figures/{id}
     [HttpPatch("figures/{id:guid}")]
     public async Task<IActionResult> ToggleFigure(Guid id, [FromBody] ToggleFigureRequest request)
     {
@@ -55,14 +55,13 @@ public class FiguresController(AppDbContext db, IStorageService storage, IBackgr
             figure.Caption));
     }
 
-    // GET /api/figures/{id}/thumbnail
+    // GET /figures/{id}/thumbnail
     [HttpGet("figures/{id:guid}/thumbnail")]
     public async Task<IActionResult> GetFigureThumbnail(Guid id)
     {
         var figure = await db.Figures.FindAsync(id);
         if (figure is null) return NotFound();
 
-        // Stub keys don't exist in S3 — return a placeholder SVG
         if (figure.S3Key.StartsWith("stub/"))
         {
             var svg = $"<svg xmlns='http://www.w3.org/2000/svg' width='200' height='150'><rect width='200' height='150' fill='#e2e8f0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='14' fill='#64748b'>Figure {id.ToString()[..4]}</text></svg>";
@@ -81,54 +80,47 @@ public class FiguresController(AppDbContext db, IStorageService storage, IBackgr
         }
     }
 
-    // POST /api/modules/{moduleId}/extract
+    // POST /modules/{moduleId}/extract
     [HttpPost("modules/{moduleId:guid}/extract")]
     public async Task<IActionResult> TriggerExtraction(Guid moduleId)
     {
         var module = await db.Modules.FindAsync(moduleId);
         if (module is null) return NotFound();
 
-        // Prevent double-trigger — only allow if NotStarted or Failed
-        if (module.ExtractionStatus is not ExtractionStatus.NotStarted and not ExtractionStatus.Failed)
+        // Block if a run is already in progress
+        var hasActiveRun = await db.ExtractionRuns.AnyAsync(r =>
+            r.ModuleId == moduleId &&
+            (r.Status == ExtractionStatus.Queued || r.Status == ExtractionStatus.Processing));
+
+        if (hasActiveRun)
             return Conflict(new ProblemDetails
             {
-                Title = "Extraction already in progress or complete.",
-                Detail = $"Module extraction status is {module.ExtractionStatus}."
+                Title = "Extraction already in progress.",
+                Detail = "Wait for the current run to complete before starting a new one."
             });
 
-        module.ExtractionStatus = ExtractionStatus.Queued;
+        var run = new ExtractionRun { ModuleId = moduleId };
+        db.ExtractionRuns.Add(run);
         await db.SaveChangesAsync();
 
-        jobClient.Enqueue<LectureExtractionJob>(j => j.Execute(moduleId, default));
+        jobClient.Enqueue<LectureExtractionJob>(j => j.Execute(moduleId, run.Id, default));
 
         return Accepted();
     }
 
-    // GET /api/modules/{moduleId}/docx
-    [HttpGet("modules/{moduleId:guid}/docx")]
-    public async Task<IActionResult> GetDocxUrl(Guid moduleId)
-    {
-        var module = await db.Modules.FindAsync(moduleId);
-        if (module is null) return NotFound();
-
-        if (module.ExtractionStatus != ExtractionStatus.Ready)
-            return Conflict(new ProblemDetails
-            {
-                Title = "Docx not ready.",
-                Detail = $"Module extraction status is {module.ExtractionStatus}."
-            });
-
-        return Ok(new { url = $"/modules/{moduleId}/docx/download" });
-    }
-
-    // GET /api/modules/{moduleId}/docx/download
+    // GET /modules/{moduleId}/docx/download
     [HttpGet("modules/{moduleId:guid}/docx/download")]
     public async Task<IActionResult> DownloadDocx(Guid moduleId)
     {
-        var module = await db.Modules.FindAsync(moduleId);
-        if (module is null || string.IsNullOrEmpty(module.DocxS3Key)) return NotFound();
+        var latestRun = await db.ExtractionRuns
+            .Where(r => r.ModuleId == moduleId && r.Status == ExtractionStatus.Ready)
+            .OrderByDescending(r => r.CreatedAt)
+            .FirstOrDefaultAsync();
 
-        var stream = await storage.DownloadAsync(module.DocxS3Key);
+        if (latestRun is null || string.IsNullOrEmpty(latestRun.DocxS3Key))
+            return NotFound();
+
+        var stream = await storage.DownloadAsync(latestRun.DocxS3Key);
         return File(stream,
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "lecture.docx");

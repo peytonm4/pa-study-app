@@ -113,12 +113,27 @@ public class DocumentsController : ControllerBase
 
         var document = await _db.Documents
             .Include(d => d.Module)
+            .Include(d => d.Figures)
             .FirstOrDefaultAsync(d => d.Id == id && d.Module.UserId == userId);
 
         if (document is null) return NotFound();
 
         try { await _storage.DeleteAsync(document.S3Key); }
         catch { /* log but proceed with DB deletion */ }
+
+        foreach (var figure in document.Figures)
+        {
+            try { await _storage.DeleteAsync(figure.S3Key); }
+            catch { }
+        }
+
+        // Cancel any active extraction runs for this module so user can re-run cleanly
+        var activeRuns = await _db.ExtractionRuns
+            .Where(r => r.ModuleId == document.Module.Id &&
+                        (r.Status == ExtractionStatus.Queued || r.Status == ExtractionStatus.Processing))
+            .ToListAsync();
+        foreach (var run in activeRuns)
+            run.Status = ExtractionStatus.Failed;
 
         _db.Documents.Remove(document);
         await _db.SaveChangesAsync();

@@ -110,7 +110,7 @@ public class FigureToggleTests(FiguresTestWebApplicationFactory factory) : IClas
         var client = CreateAuthenticatedClient();
 
         var response = await client.PatchAsJsonAsync(
-            $"/api/figures/{factory.SeededFigureId}",
+            $"/figures/{factory.SeededFigureId}",
             new { keep = true });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -121,7 +121,7 @@ public class FigureToggleTests(FiguresTestWebApplicationFactory factory) : IClas
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"/api/modules/{factory.SeededModuleId}/figures");
+        var response = await client.GetAsync($"/modules/{factory.SeededModuleId}/figures");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -133,7 +133,7 @@ public class FigureToggleTests(FiguresTestWebApplicationFactory factory) : IClas
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"/api/modules/{Guid.NewGuid()}/figures");
+        var response = await client.GetAsync($"/modules/{Guid.NewGuid()}/figures");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }

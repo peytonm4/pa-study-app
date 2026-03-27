@@ -16,8 +16,8 @@ public class StubFigureSkillRunner : ISkillRunner
     public Task<string> RunAsync(string scriptPath, string inputJson, CancellationToken ct = default)
         => Task.FromResult("""
             {"figures":[
-              {"id":"stub-fig-1","s3_key":"stub/fig1.png","page":1,"has_caption":true,"label_type":"Figure"},
-              {"id":"stub-fig-2","s3_key":"stub/fig2.png","page":3,"has_caption":false,"label_type":null}
+              {"id":"stub-fig-1","s3_key":"figures/fig1.png","page":1,"has_caption":true,"label_type":"Figure"},
+              {"id":"stub-fig-2","s3_key":"figures/fig2.png","page":3,"has_caption":false,"label_type":null}
             ]}
             """);
 }
@@ -102,8 +102,8 @@ public class FigureExtractionJobTests
         await job.Execute(document.Id);
 
         var figures = db.Figures.ToList();
-        var figWithCaption = figures.First(f => f.S3Key == "stub/fig1.png");
-        var figWithoutCaption = figures.First(f => f.S3Key == "stub/fig2.png");
+        var figWithCaption = figures.First(f => f.S3Key == "figures/fig1.png");
+        var figWithoutCaption = figures.First(f => f.S3Key == "figures/fig2.png");
 
         Assert.True(figWithCaption.Keep);
         Assert.False(figWithoutCaption.Keep);

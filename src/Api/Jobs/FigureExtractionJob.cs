@@ -78,14 +78,22 @@ public class FigureExtractionJob(
             await db.SaveChangesAsync(ct);
 
             // For kept figures, populate Caption via IVisionProvider
-            foreach (var figure in figures.Where(f => f.Keep))
+            // Skip stub keys (stub/ prefix) — they don't exist in S3
+            foreach (var figure in figures.Where(f => f.Keep && !f.S3Key.StartsWith("stub/")))
             {
-                var imageStream = await storage.DownloadAsync(figure.S3Key, ct);
-                using var ms = new MemoryStream();
-                await imageStream.CopyToAsync(ms, ct);
-                var imageBytes = ms.ToArray();
+                try
+                {
+                    var imageStream = await storage.DownloadAsync(figure.S3Key, ct);
+                    using var ms = new MemoryStream();
+                    await imageStream.CopyToAsync(ms, ct);
+                    var imageBytes = ms.ToArray();
 
-                figure.Caption = await visionProvider.ExtractTextAsync(imageBytes, "image/png");
+                    figure.Caption = await visionProvider.ExtractTextAsync(imageBytes, "image/png");
+                }
+                catch (Exception)
+                {
+                    // Caption is optional — skip if image unavailable
+                }
             }
 
             if (figures.Any(f => f.Keep))

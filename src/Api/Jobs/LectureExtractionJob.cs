@@ -1,8 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,15 +17,15 @@ public class LectureExtractionJob(
     IStorageService storage,
     IConfiguration config)
 {
-    public async Task Execute(Guid moduleId, CancellationToken ct = default)
+    public async Task Execute(Guid moduleId, Guid runId, CancellationToken ct = default)
     {
-        var module = await db.Modules.FindAsync([moduleId], ct)
-            ?? throw new InvalidOperationException($"Module {moduleId} not found");
+        var run = await db.ExtractionRuns.FindAsync([runId], ct)
+            ?? throw new InvalidOperationException($"ExtractionRun {runId} not found");
 
         try
         {
             // Step 1: Mark as Processing
-            module.ExtractionStatus = ExtractionStatus.Processing;
+            run.Status = ExtractionStatus.Processing;
             await db.SaveChangesAsync(ct);
 
             // Step 2: Fetch Keep=true Figures for this module (via Document FK)
@@ -76,7 +73,10 @@ public class LectureExtractionJob(
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 ?? throw new InvalidOperationException("Skill returned null or invalid JSON");
 
-            // Step 8: Map to Section entities
+            // Step 8: Replace existing sections for this module
+            var existing = await db.Sections.Where(s => s.ModuleId == moduleId).ToListAsync(ct);
+            db.Sections.RemoveRange(existing);
+
             var sections = lectureResult.Sections.Select((dto, index) => new Section
             {
                 Id = Guid.NewGuid(),
@@ -89,101 +89,103 @@ public class LectureExtractionJob(
                 CreatedAt = DateTime.UtcNow
             }).ToList();
 
-            // Step 9: Bulk insert sections
             db.Sections.AddRange(sections);
             await db.SaveChangesAsync(ct);
 
-            // Step 10: Build .docx in memory
-            using var ms = new MemoryStream();
-            using (var wordDoc = WordprocessingDocument.Create(ms, WordprocessingDocumentType.Document))
-            {
-                var mainPart = wordDoc.AddMainDocumentPart();
-                mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document(new Body());
+            // Step 9: Build .docx in memory
+            using var ms = BuildDocx(sections);
 
-                // Add StyleDefinitionsPart with Heading1/Heading2/Heading3 styles
-                var stylesPart = mainPart.AddNewPart<StyleDefinitionsPart>();
-                stylesPart.Styles = BuildHeadingStyles();
-                stylesPart.Styles.Save();
-
-                var body = mainPart.Document.Body!;
-
-                foreach (var section in sections)
-                {
-                    // Heading paragraph
-                    var headingStyleId = section.HeadingLevel switch
-                    {
-                        1 => "Heading1",
-                        2 => "Heading2",
-                        _ => "Heading3"
-                    };
-
-                    var headingPara = new Paragraph(
-                        new ParagraphProperties(
-                            new ParagraphStyleId { Val = headingStyleId }),
-                        new Run(new Text(section.HeadingText)));
-                    body.AppendChild(headingPara);
-
-                    // Content paragraph
-                    if (!string.IsNullOrWhiteSpace(section.Content))
-                    {
-                        var contentPara = new Paragraph(
-                            new Run(new Text(section.Content)));
-                        body.AppendChild(contentPara);
-                    }
-                }
-
-                mainPart.Document.Save();
-            }
-
-            // Step 11: Upload .docx to S3
+            // Step 10: Upload .docx to S3
             ms.Position = 0;
-            var s3Key = $"modules/{moduleId}/lecture.docx";
+            var s3Key = $"modules/{moduleId}/runs/{runId}/lecture.docx";
             await storage.UploadAsync(ms, s3Key,
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ct);
 
-            // Step 12: Update module status
-            module.DocxS3Key = s3Key;
-            module.ExtractionStatus = ExtractionStatus.Ready;
+            // Step 11: Update run status
+            run.DocxS3Key = s3Key;
+            run.Status = ExtractionStatus.Ready;
             await db.SaveChangesAsync(ct);
         }
         catch (Exception ex)
         {
-            module.ExtractionStatus = ExtractionStatus.Failed;
-            module.ExtractionError = ex.Message;
+            run.Status = ExtractionStatus.Failed;
+            run.ErrorMessage = ex.Message;
             await db.SaveChangesAsync(ct);
             throw;
         }
     }
 
-    private static Styles BuildHeadingStyles()
+    private static MemoryStream BuildDocx(List<Section> sections)
     {
-        var styles = new Styles();
+        var ms = new MemoryStream();
+        using (var zip = new System.IO.Compression.ZipArchive(ms, System.IO.Compression.ZipArchiveMode.Create, leaveOpen: true))
+        {
+            WriteZipEntry(zip, "[Content_Types].xml",
+                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>""" +
+                """<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">""" +
+                """<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>""" +
+                """<Default Extension="xml" ContentType="application/xml"/>""" +
+                """<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>""" +
+                """<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>""" +
+                """</Types>""");
 
-        styles.AppendChild(BuildHeadingStyle("Heading1", "heading 1", "1"));
-        styles.AppendChild(BuildHeadingStyle("Heading2", "heading 2", "2"));
-        styles.AppendChild(BuildHeadingStyle("Heading3", "heading 3", "3"));
+            WriteZipEntry(zip, "_rels/.rels",
+                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>""" +
+                """<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">""" +
+                """<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>""" +
+                """</Relationships>""");
 
-        return styles;
+            WriteZipEntry(zip, "word/_rels/document.xml.rels",
+                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>""" +
+                """<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">""" +
+                """<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>""" +
+                """</Relationships>""");
+
+            WriteZipEntry(zip, "word/styles.xml",
+                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>""" +
+                """<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">""" +
+                """<w:docDefaults><w:rPrDefault><w:rPr>""" +
+                """<w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>""" +
+                """<w:sz w:val="24"/><w:szCs w:val="24"/>""" +
+                """</w:rPr></w:rPrDefault></w:docDefaults>""" +
+                """<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>""" +
+                """<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:sz w:val="32"/></w:rPr></w:style>""" +
+                """<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:outlineLvl w:val="1"/></w:pPr><w:rPr><w:b/><w:sz w:val="28"/></w:rPr></w:style>""" +
+                """<w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:outlineLvl w:val="2"/></w:pPr><w:rPr><w:b/><w:sz w:val="24"/></w:rPr></w:style>""" +
+                """</w:styles>""");
+
+            var bodyXml = new System.Text.StringBuilder();
+            foreach (var section in sections)
+            {
+                var headingId = section.HeadingLevel switch { 1 => "Heading1", 2 => "Heading2", _ => "Heading3" };
+                var heading = System.Security.SecurityElement.Escape(section.HeadingText);
+                bodyXml.Append($"""<w:p><w:pPr><w:pStyle w:val="{headingId}"/></w:pPr><w:r><w:t>{heading}</w:t></w:r></w:p>""");
+                if (!string.IsNullOrWhiteSpace(section.Content))
+                {
+                    var content = System.Security.SecurityElement.Escape(section.Content);
+                    bodyXml.Append($"""<w:p><w:r><w:t xml:space="preserve">{content}</w:t></w:r></w:p>""");
+                }
+            }
+
+            WriteZipEntry(zip, "word/document.xml",
+                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>""" +
+                """<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">""" +
+                $"<w:body>{bodyXml}</w:body>" +
+                """</w:document>""");
+        }
+
+        ms.Position = 0;
+        return ms;
     }
 
-    private static Style BuildHeadingStyle(string styleId, string styleName, string outlineLevel)
+    private static void WriteZipEntry(System.IO.Compression.ZipArchive zip, string name, string content)
     {
-        var style = new Style
-        {
-            Type = StyleValues.Paragraph,
-            StyleId = styleId
-        };
-        style.AppendChild(new StyleName { Val = styleName });
-        style.AppendChild(new BasedOn { Val = "Normal" });
-        style.AppendChild(new NextParagraphStyle { Val = "Normal" });
-        style.AppendChild(new ParagraphProperties(
-            new OutlineLevel { Val = int.Parse(outlineLevel) - 1 }));
-
-        return style;
+        var entry = zip.CreateEntry(name, System.IO.Compression.CompressionLevel.Optimal);
+        using var writer = new System.IO.StreamWriter(entry.Open(), System.Text.Encoding.UTF8);
+        writer.Write(content);
     }
 }
 
-// Internal DTOs for JSON deserialization
 internal record LectureResult(
     [property: JsonPropertyName("sections")] List<SectionDto> Sections,
     [property: JsonPropertyName("docx_filename")] string? DocxFilename = null);

@@ -45,7 +45,10 @@ public class S3StorageService : IStorageService
             BucketName = _bucketName,
             Key = key
         };
-        var response = await _s3.GetObjectAsync(request, ct);
-        return response.ResponseStream;
+        using var response = await _s3.GetObjectAsync(request, ct);
+        var ms = new MemoryStream();
+        await response.ResponseStream.CopyToAsync(ms, ct);
+        ms.Position = 0;
+        return ms;
     }
 }

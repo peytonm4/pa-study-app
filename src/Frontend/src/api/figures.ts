@@ -16,6 +16,15 @@ export const figures = {
     client.patch<FigureDto>(`/figures/${figureId}`, { keep }).then(r => r.data),
   runExtraction: (moduleId: string) =>
     client.post(`/modules/${moduleId}/extract`).then(r => r.data),
-  getDocxDownloadUrl: (moduleId: string) =>
-    client.get<{ url: string }>(`/modules/${moduleId}/docx`).then(r => r.data),
+  downloadDocx: async (moduleId: string): Promise<void> => {
+    const response = await client.get(`/modules/${moduleId}/docx/download`, { responseType: 'blob' });
+    const href = URL.createObjectURL(response.data);
+    const a = document.createElement('a');
+    a.href = href;
+    a.download = 'lecture.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(href), 100);
+  },
 };

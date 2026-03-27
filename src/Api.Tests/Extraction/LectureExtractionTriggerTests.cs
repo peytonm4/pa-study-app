@@ -46,6 +46,10 @@ public class ExtractionTriggerTestFactory : WebApplicationFactory<DevAuthHandler
     public ExtractionStubJobClient JobClient { get; } = new();
     public Guid SeededModuleId { get; } = Guid.NewGuid();
     public Guid ReadyModuleId { get; } = Guid.NewGuid();
+    public Guid ReRunModuleId { get; } = Guid.NewGuid();
+    public Guid QueuedModuleId { get; } = Guid.NewGuid();
+    public Guid EnqueueTestModuleId { get; } = Guid.NewGuid();
+    public Guid DbCheckModuleId { get; } = Guid.NewGuid();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -94,17 +98,64 @@ public class ExtractionTriggerTestFactory : WebApplicationFactory<DevAuthHandler
             {
                 Id = SeededModuleId,
                 UserId = new Guid("00000000-0000-0000-0000-000000000001"),
-                Name = "Not Started Module",
-                ExtractionStatus = ExtractionStatus.NotStarted
+                Name = "Not Started Module"
             });
 
             db.Modules.Add(new Module
             {
                 Id = ReadyModuleId,
                 UserId = new Guid("00000000-0000-0000-0000-000000000001"),
-                Name = "Ready Module",
-                ExtractionStatus = ExtractionStatus.Ready,
-                DocxS3Key = $"modules/{Guid.NewGuid()}/lecture.docx"
+                Name = "Ready Module"
+            });
+
+            db.ExtractionRuns.Add(new ExtractionRun
+            {
+                Id = Guid.NewGuid(),
+                ModuleId = ReadyModuleId,
+                Status = ExtractionStatus.Ready,
+                DocxS3Key = $"modules/{ReadyModuleId}/runs/{Guid.NewGuid()}/lecture.docx"
+            });
+
+            db.Modules.Add(new Module
+            {
+                Id = ReRunModuleId,
+                UserId = new Guid("00000000-0000-0000-0000-000000000001"),
+                Name = "Re-Run Module"
+            });
+            db.ExtractionRuns.Add(new ExtractionRun
+            {
+                Id = Guid.NewGuid(),
+                ModuleId = ReRunModuleId,
+                Status = ExtractionStatus.Ready,
+                DocxS3Key = $"modules/{ReRunModuleId}/runs/{Guid.NewGuid()}/lecture.docx"
+            });
+
+            db.Modules.Add(new Module
+            {
+                Id = QueuedModuleId,
+                UserId = new Guid("00000000-0000-0000-0000-000000000001"),
+                Name = "Queued Module"
+            });
+
+            db.ExtractionRuns.Add(new ExtractionRun
+            {
+                Id = Guid.NewGuid(),
+                ModuleId = QueuedModuleId,
+                Status = ExtractionStatus.Queued
+            });
+
+            db.Modules.Add(new Module
+            {
+                Id = EnqueueTestModuleId,
+                UserId = new Guid("00000000-0000-0000-0000-000000000001"),
+                Name = "Enqueue Test Module"
+            });
+
+            db.Modules.Add(new Module
+            {
+                Id = DbCheckModuleId,
+                UserId = new Guid("00000000-0000-0000-0000-000000000001"),
+                Name = "DB Check Module"
             });
 
             db.SaveChanges();
@@ -140,7 +191,7 @@ public class LectureExtractionTriggerTests(ExtractionTriggerTestFactory factory)
         factory.JobClient.EnqueuedJobs.Clear();
 
         var response = await client.PostAsync(
-            $"/api/modules/{factory.SeededModuleId}/extract",
+            $"/modules/{factory.EnqueueTestModuleId}/extract",
             null);
 
         Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
@@ -157,7 +208,7 @@ public class LectureExtractionTriggerTests(ExtractionTriggerTestFactory factory)
         var client = CreateAuthenticatedClient();
 
         var response = await client.PostAsync(
-            $"/api/modules/{Guid.NewGuid()}/extract",
+            $"/modules/{Guid.NewGuid()}/extract",
             null);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -169,7 +220,7 @@ public class LectureExtractionTriggerTests(ExtractionTriggerTestFactory factory)
         var client = CreateAuthenticatedClient();
 
         var response = await client.GetAsync(
-            $"/api/modules/{factory.ReadyModuleId}/docx");
+            $"/modules/{factory.ReadyModuleId}/docx");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<DocxUrlDto>();
@@ -183,7 +234,7 @@ public class LectureExtractionTriggerTests(ExtractionTriggerTestFactory factory)
         var client = CreateAuthenticatedClient();
 
         var response = await client.GetAsync(
-            $"/api/modules/{Guid.NewGuid()}/docx");
+            $"/modules/{Guid.NewGuid()}/docx");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -194,9 +245,49 @@ public class LectureExtractionTriggerTests(ExtractionTriggerTestFactory factory)
         var client = CreateAuthenticatedClient();
 
         var response = await client.GetAsync(
-            $"/api/modules/{factory.SeededModuleId}/docx");
+            $"/modules/{factory.SeededModuleId}/docx");
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PostExtract_WhenRunQueued_Returns409()
+    {
+        var client = CreateAuthenticatedClient();
+
+        var response = await client.PostAsync(
+            $"/modules/{factory.QueuedModuleId}/extract",
+            null);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PostExtract_WhenPreviousRunReady_Returns202()
+    {
+        var client = CreateAuthenticatedClient();
+
+        // Ready modules allow re-extraction (dedicated module to avoid polluting ReadyModuleId)
+        var response = await client.PostAsync(
+            $"/modules/{factory.ReRunModuleId}/extract",
+            null);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PostExtract_CreatesQueuedRunInDb()
+    {
+        var client = CreateAuthenticatedClient();
+
+        await client.PostAsync($"/modules/{factory.DbCheckModuleId}/extract", null);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var run = db.ExtractionRuns.SingleOrDefault(r => r.ModuleId == factory.DbCheckModuleId);
+
+        Assert.NotNull(run);
+        Assert.Equal(ExtractionStatus.Queued, run.Status);
     }
 }
 
