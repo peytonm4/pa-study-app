@@ -49,6 +49,8 @@ builder.Services.AddScoped<IngestionJob>();
 builder.Services.AddScoped<VisionExtractionJob>();
 builder.Services.AddScoped<FigureExtractionJob>();
 builder.Services.AddScoped<LectureExtractionJob>();
+builder.Services.AddScoped<ContentGenerationJob>();
+builder.Services.AddScoped<SectionGenerationJob>();
 
 builder.Services.AddHostedService<Worker>();
 

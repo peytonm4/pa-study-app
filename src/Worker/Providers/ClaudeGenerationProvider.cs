@@ -1,6 +1,7 @@
 using Anthropic;
 using Anthropic.Models.Messages;
 using Microsoft.Extensions.Configuration;
+using StudyApp.Api.Providers;
 
 namespace StudyApp.Worker.Providers;
 

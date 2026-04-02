@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using StudyApp.Api.Providers;
 using StudyApp.Worker;
 using StudyApp.Worker.Providers;
+// IGenerationProvider now lives in StudyApp.Api.Providers (moved from Worker.Providers)
 
 namespace StudyApp.Api.Tests.Providers;
 

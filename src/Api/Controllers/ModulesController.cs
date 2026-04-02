@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudyApp.Api.Data;
+using StudyApp.Api.Jobs;
 using StudyApp.Api.Models;
 using StudyApp.Api.Services;
 
@@ -91,6 +92,11 @@ public class ModulesController : ControllerBase
             .OrderByDescending(r => r.CreatedAt)
             .FirstOrDefaultAsync();
 
+        var latestGenerationRun = await _db.GenerationRuns
+            .Where(r => r.ModuleId == id)
+            .OrderByDescending(r => r.CreatedAt)
+            .FirstOrDefaultAsync();
+
         return Ok(new
         {
             module.Id,
@@ -98,6 +104,7 @@ public class ModulesController : ControllerBase
             Status = ComputeStatus(module),
             module.CreatedAt,
             ExtractionStatus = latestRun?.Status.ToString() ?? "NotStarted",
+            GenerationStatus = latestGenerationRun?.Status.ToString() ?? "NotStarted",
             Documents = module.Documents.Select(d => new
             {
                 d.Id,
@@ -106,6 +113,48 @@ public class ModulesController : ControllerBase
                 d.CreatedAt
             })
         });
+    }
+
+    // POST /modules/{id}/generate
+    [HttpPost("{id:guid}/generate")]
+    public async Task<IActionResult> TriggerGeneration(Guid id, [FromServices] IBackgroundJobClient jobClient)
+    {
+        var userId = CurrentUserId;
+        var module = await _db.Modules
+            .FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId);
+        if (module is null) return NotFound();
+
+        // Gate 1: Extraction must be Ready
+        var latestExtraction = await _db.ExtractionRuns
+            .Where(r => r.ModuleId == id)
+            .OrderByDescending(r => r.CreatedAt)
+            .FirstOrDefaultAsync();
+        if (latestExtraction?.Status != ExtractionStatus.Ready)
+            return Conflict(new ProblemDetails { Title = "Extraction is not Ready." });
+
+        // Gate 2: No generation in-flight
+        var latestGeneration = await _db.GenerationRuns
+            .Where(r => r.ModuleId == id)
+            .OrderByDescending(r => r.CreatedAt)
+            .FirstOrDefaultAsync();
+        if (latestGeneration?.Status is GenerationStatus.Queued or GenerationStatus.Processing)
+            return Conflict(new ProblemDetails { Title = "Generation already in progress." });
+
+        // Create run and enqueue
+        var run = new GenerationRun
+        {
+            Id = Guid.NewGuid(),
+            ModuleId = id,
+            Status = GenerationStatus.Queued,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        _db.GenerationRuns.Add(run);
+        await _db.SaveChangesAsync();
+
+        jobClient.Enqueue<ContentGenerationJob>(j => j.Execute(id, run.Id, CancellationToken.None));
+
+        return Accepted(new { generationRunId = run.Id });
     }
 
     // DELETE /modules/{id}
