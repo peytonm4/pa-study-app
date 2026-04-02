@@ -10,4 +10,5 @@ public class Module
     public ICollection<Document> Documents { get; set; } = [];
     public ICollection<Section> Sections { get; set; } = [];
     public ICollection<ExtractionRun> ExtractionRuns { get; set; } = [];
+    public ICollection<GenerationRun> GenerationRuns { get; set; } = [];
 }
