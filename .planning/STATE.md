@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 4 planned — 6 plans in 4 waves, ready to execute
-last_updated: "2026-04-02T00:00:00.000Z"
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-04-02T06:01:31.850Z"
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 19
-  completed_plans: 19
+  total_plans: 25
+  completed_plans: 20
   percent: 60
 ---
 
@@ -131,6 +131,7 @@ Recent decisions affecting current work:
 - [Post-phase-3 fixes]: StubFigureSkillRunner keys changed from stub/fig*.png to figures/fig*.png so caption path runs in unit tests (stub/ prefix is skipped in production)
 - [Post-phase-3 fixes]: 13 new tests added — ExtractionRun trigger logic (block on Queued/Processing, allow re-run after Ready), document delete (204, 404, cancels active runs), module CRUD (list, detail with run status, NotStarted default, create, delete); 54/55 pass (1 skipped by design)
 - [Post-phase-3 fixes]: Test isolation pattern established — each POST/DELETE test that mutates state uses a dedicated seeded resource; shared factories only used for read-only assertions
+- [Phase 04-content-generation]: Wave 0 stub pattern for Phase 4: xUnit only, no production type imports, [Fact(Skip='Wave 0 stub')] — mirrors Phase 3 approach
 
 ### Pending Todos
 
@@ -142,6 +143,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-02T00:00:00.000Z
-Stopped at: Phase 4 planned — ready to execute
-Resume file: .planning/phases/04-content-generation/04-01-PLAN.md
+Last session: 2026-04-02T06:01:31.846Z
+Stopped at: Completed 04-01-PLAN.md
+Resume file: None

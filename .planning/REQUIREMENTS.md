@@ -49,14 +49,14 @@
 
 ### Content Generation
 
-- [ ] **GEN-01**: App generates study guide pages per section (Direct Answer, High-Yield Details, Key Tables, Must-Know Numbers, Sources) grounded in reorganized section content
-- [ ] **GEN-02**: App generates flashcards (mix of cloze + Q&A format) with source references, organized by section
-- [ ] **GEN-03**: App generates micro-quizzes (3-7 questions) with source citations, organized by section
-- [ ] **GEN-04**: App generates concept maps for sections with algorithmic content (Mermaid flowchart + JSON graph)
-- [ ] **GEN-05**: App shows "Not found in your sources" when evidence is insufficient for a claim
-- [ ] **GEN-06**: All generated content includes source references (slide/page numbers, file names)
-- [ ] **GEN-07**: Concept map generation only triggers when algorithmic content is detected (keywords: algorithm, flowchart, workup, stepwise, if/then)
-- [ ] **GEN-08**: App works in stub mode (deterministic fallbacks) without LLM API keys
+- [x] **GEN-01**: App generates study guide pages per section (Direct Answer, High-Yield Details, Key Tables, Must-Know Numbers, Sources) grounded in reorganized section content
+- [x] **GEN-02**: App generates flashcards (mix of cloze + Q&A format) with source references, organized by section
+- [x] **GEN-03**: App generates micro-quizzes (3-7 questions) with source citations, organized by section
+- [x] **GEN-04**: App generates concept maps for sections with algorithmic content (Mermaid flowchart + JSON graph)
+- [x] **GEN-05**: App shows "Not found in your sources" when evidence is insufficient for a claim
+- [x] **GEN-06**: All generated content includes source references (slide/page numbers, file names)
+- [x] **GEN-07**: Concept map generation only triggers when algorithmic content is detected (keywords: algorithm, flowchart, workup, stepwise, if/then)
+- [x] **GEN-08**: App works in stub mode (deterministic fallbacks) without LLM API keys
 
 ### Study Experience
 
@@ -148,14 +148,14 @@
 | SKILL-01 | Phase 3 | Complete |
 | SKILL-02 | Phase 3 | Complete |
 | SKILL-03 | Phase 3 | Complete |
-| GEN-01 | Phase 4 | Pending |
-| GEN-02 | Phase 4 | Pending |
-| GEN-03 | Phase 4 | Pending |
-| GEN-04 | Phase 4 | Pending |
-| GEN-05 | Phase 4 | Pending |
-| GEN-06 | Phase 4 | Pending |
-| GEN-07 | Phase 4 | Pending |
-| GEN-08 | Phase 4 | Pending |
+| GEN-01 | Phase 4 | Complete |
+| GEN-02 | Phase 4 | Complete |
+| GEN-03 | Phase 4 | Complete |
+| GEN-04 | Phase 4 | Complete |
+| GEN-05 | Phase 4 | Complete |
+| GEN-06 | Phase 4 | Complete |
+| GEN-07 | Phase 4 | Complete |
+| GEN-08 | Phase 4 | Complete |
 | STUDY-01 | Phase 5 | Pending |
 | STUDY-02 | Phase 5 | Pending |
 | STUDY-03 | Phase 5 | Pending |
