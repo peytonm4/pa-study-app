@@ -122,5 +122,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 5/5 | Complete    | 2026-03-17 |
 | 2. Document Ingestion | 6/7 | Complete    | 2026-03-18 |
 | 3. Figures and Lecture Extraction | 5/7 | In Progress|  |
-| 4. Content Generation | 2/6 | In Progress|  |
+| 4. Content Generation | 3/6 | In Progress|  |
 | 5. Study Experience | 0/TBD | Not started | - |
