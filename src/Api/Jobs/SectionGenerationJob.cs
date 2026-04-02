@@ -108,7 +108,7 @@ public class SectionGenerationJob(AppDbContext db, IGenerationProvider generatio
         }
     }
 
-    internal static bool IsAlgorithmic(Section section)
+    public static bool IsAlgorithmic(Section section)
     {
         var text = $"{section.HeadingText} {section.Content}".ToLowerInvariant();
         return AlgorithmicKeywords.Any(kw => text.Contains(kw));
@@ -129,7 +129,7 @@ public class SectionGenerationJob(AppDbContext db, IGenerationProvider generatio
         "Section content:\n" + s.Content;
 
     private static string QuizPrompt(Section s) =>
-        "Generate 3-7 multiple-choice questions for section \"" + s.HeadingText + "\".\n" +
+        "Generate 3-7 quiz questions (multiple-choice) for section \"" + s.HeadingText + "\".\n" +
         "Use ONLY source material. Respond with valid JSON:\n" +
         "{\"questions\":[{\"question\":\"...\",\"choices\":[\"A\",\"B\",\"C\",\"D\"],\"correct_answer\":\"A\",\"source_ref\":\"\"}]}\n\n" +
         "Section content:\n" + s.Content;
