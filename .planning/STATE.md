@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-04-02T06:01:31.850Z"
+stopped_at: Completed 04-content-generation-04-02-PLAN.md
+last_updated: "2026-04-02T06:02:42.515Z"
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 25
-  completed_plans: 20
+  completed_plans: 21
   percent: 60
 ---
 
@@ -132,6 +132,8 @@ Recent decisions affecting current work:
 - [Post-phase-3 fixes]: 13 new tests added — ExtractionRun trigger logic (block on Queued/Processing, allow re-run after Ready), document delete (204, 404, cancels active runs), module CRUD (list, detail with run status, NotStarted default, create, delete); 54/55 pass (1 skipped by design)
 - [Post-phase-3 fixes]: Test isolation pattern established — each POST/DELETE test that mutates state uses a dedicated seeded resource; shared factories only used for read-only assertions
 - [Phase 04-content-generation]: Wave 0 stub pattern for Phase 4: xUnit only, no production type imports, [Fact(Skip='Wave 0 stub')] — mirrors Phase 3 approach
+- [Phase 04-content-generation]: GenerationRun adds UpdatedAt (absent from ExtractionRun) for polling freshness in status endpoint
+- [Phase 04-content-generation]: Content entity JSON fields stored as plain string columns with [] defaults — consistent with existing SourcePageRefsJson pattern
 
 ### Pending Todos
 
@@ -143,6 +145,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-02T06:01:31.846Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-04-02T06:02:42.511Z
+Stopped at: Completed 04-content-generation-04-02-PLAN.md
 Resume file: None
