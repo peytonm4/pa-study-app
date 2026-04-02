@@ -13,7 +13,7 @@ Five phases that build the app from runnable skeleton to a complete study tool. 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Runnable local stack with dev auth and all infrastructure wired up (completed 2026-03-17)
-- [x] **Phase 2: Document Ingestion** - PPTX and PDF sources uploaded, processed, and chunked with LLM providers wired (completed 2026-03-18)
+- [x] **Phase 2: Document Ingestion** - POSTA and PDF sources uploaded, processed, and chunked with LLM providers wired (completed 2026-03-18)
 - [ ] **Phase 3: Figures and Lecture Extraction** - Figures curated, lecture reorganized into structured .docx + sections in DB
 - [ ] **Phase 4: Content Generation** - Grounded study materials generated for every objective
 - [ ] **Phase 5: Study Experience** - Students can browse and do guided study sessions
@@ -92,7 +92,15 @@ Plans:
   3. Sections with algorithmic content (algorithm, flowchart, workup, stepwise, if/then keywords) get a Mermaid concept map; sections without do not
   4. When evidence is insufficient the app shows "Not found in your sources" rather than generating unsupported content
   5. The full generation pipeline runs end-to-end in stub mode without any LLM API keys configured
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Wave 0 test stubs: Generation/ test directory with 13 skipped [Fact] stubs
+- [ ] 04-02-PLAN.md — EF entities (GenerationRun, StudyGuide, Flashcard, QuizQuestion, ConceptMap) + migration
+- [ ] 04-03-PLAN.md — StubGenerationProvider expansion + SectionGenerationJob (TDD)
+- [ ] 04-04-PLAN.md — ContentGenerationJob orchestrator + POST /modules/{id}/generate endpoint (TDD)
+- [ ] 04-05-PLAN.md — Frontend: Generate Study Materials section on ModuleDetailPage with polling
+- [ ] 04-06-PLAN.md — Human verification: end-to-end pipeline in stub mode
 
 ### Phase 5: Study Experience
 **Goal**: Students can browse generated materials freely or complete a guided study session per section
@@ -114,5 +122,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 5/5 | Complete    | 2026-03-17 |
 | 2. Document Ingestion | 6/7 | Complete    | 2026-03-18 |
 | 3. Figures and Lecture Extraction | 5/7 | In Progress|  |
-| 4. Content Generation | 0/TBD | Not started | - |
+| 4. Content Generation | 0/6 | Not started | - |
 | 5. Study Experience | 0/TBD | Not started | - |
