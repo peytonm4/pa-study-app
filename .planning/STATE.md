@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-content-generation-04-04-PLAN.md
-last_updated: "2026-04-02T06:19:49.170Z"
+stopped_at: Completed 04-content-generation-04-03-PLAN.md
+last_updated: "2026-04-02T06:22:47.425Z"
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 25
-  completed_plans: 22
+  completed_plans: 23
   percent: 60
 ---
 
@@ -136,6 +136,8 @@ Recent decisions affecting current work:
 - [Phase 04-content-generation]: Content entity JSON fields stored as plain string columns with [] defaults — consistent with existing SourcePageRefsJson pattern
 - [Phase 04-content-generation]: SectionGenerationJob uses StudyApp.Api.Providers.IGenerationProvider (not Worker.Providers) to avoid circular project dependency
 - [Phase 04-content-generation]: ContentGenerationJob marks GenerationRun Ready after enqueueing all section jobs — section failures update to Failed independently
+- [Phase 04-content-generation]: IGenerationProvider moved to Api.Providers to avoid circular project dependency (Worker references Api)
+- [Phase 04-content-generation]: SectionGenerationJob uses keyword-aware StubGenerationProvider — QuizPrompt must include 'quiz' keyword
 
 ### Pending Todos
 
@@ -147,6 +149,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-02T06:19:49.165Z
-Stopped at: Completed 04-content-generation-04-04-PLAN.md
+Last session: 2026-04-02T06:22:47.420Z
+Stopped at: Completed 04-content-generation-04-03-PLAN.md
 Resume file: None
