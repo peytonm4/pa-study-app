@@ -14,6 +14,11 @@ public class AppDbContext : DbContext
     public DbSet<Figure> Figures => Set<Figure>();
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<ExtractionRun> ExtractionRuns => Set<ExtractionRun>();
+    public DbSet<GenerationRun> GenerationRuns => Set<GenerationRun>();
+    public DbSet<StudyGuide> StudyGuides => Set<StudyGuide>();
+    public DbSet<Flashcard> Flashcards => Set<Flashcard>();
+    public DbSet<QuizQuestion> QuizQuestions => Set<QuizQuestion>();
+    public DbSet<ConceptMap> ConceptMaps => Set<ConceptMap>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +93,52 @@ public class AppDbContext : DbContext
             entity.HasOne(s => s.Module)
                   .WithMany(m => m.Sections)
                   .HasForeignKey(s => s.ModuleId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<GenerationRun>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Status).HasConversion<string>();
+            entity.HasOne(r => r.Module)
+                  .WithMany(m => m.GenerationRuns)
+                  .HasForeignKey(r => r.ModuleId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<StudyGuide>(entity =>
+        {
+            entity.HasKey(sg => sg.Id);
+            entity.HasOne(sg => sg.Section)
+                  .WithMany()
+                  .HasForeignKey(sg => sg.SectionId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Flashcard>(entity =>
+        {
+            entity.HasKey(fc => fc.Id);
+            entity.HasOne(fc => fc.Section)
+                  .WithMany()
+                  .HasForeignKey(fc => fc.SectionId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<QuizQuestion>(entity =>
+        {
+            entity.HasKey(qq => qq.Id);
+            entity.HasOne(qq => qq.Section)
+                  .WithMany()
+                  .HasForeignKey(qq => qq.SectionId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ConceptMap>(entity =>
+        {
+            entity.HasKey(cm => cm.Id);
+            entity.HasOne(cm => cm.Section)
+                  .WithMany()
+                  .HasForeignKey(cm => cm.SectionId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
     }
