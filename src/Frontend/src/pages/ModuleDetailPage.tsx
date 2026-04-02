@@ -79,6 +79,14 @@ function extractionStatusVariant(status: ExtractionStatus): 'default' | 'seconda
   return 'secondary';
 }
 
+type GenerationStatus = 'NotStarted' | 'Queued' | 'Processing' | 'Ready' | 'Failed';
+
+function generationStatusVariant(status: GenerationStatus): 'default' | 'secondary' | 'destructive' {
+  if (status === 'Ready') return 'default';
+  if (status === 'Failed') return 'destructive';
+  return 'secondary';
+}
+
 export default function ModuleDetailPage() {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
@@ -89,8 +97,10 @@ export default function ModuleDetailPage() {
     queryFn: () => modules.get(id!),
     enabled: !!id,
     refetchInterval: (query) => {
-      const s = query.state.data?.extractionStatus;
-      return s === 'Ready' || s === 'Failed' ? false : 3000;
+      const es = query.state.data?.extractionStatus;
+      const gs = query.state.data?.generationStatus;
+      const running = (s?: string) => s === 'Queued' || s === 'Processing';
+      return running(es) || running(gs) ? 3000 : false;
     },
   });
 
@@ -112,6 +122,7 @@ export default function ModuleDetailPage() {
 
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [extractionError, setExtractionError] = useState<string | null>(null);
+  const [generationError, setGenerationError] = useState<string | null>(null);
   const runExtractionMutation = useMutation({
     mutationFn: () => figures.runExtraction(id!),
     onSuccess: () => {
@@ -119,6 +130,15 @@ export default function ModuleDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['module', id] });
     },
     onError: (err: Error) => setExtractionError(err.message),
+  });
+
+  const runGenerationMutation = useMutation({
+    mutationFn: () => modules.generate(id!),
+    onSuccess: () => {
+      setGenerationError(null);
+      queryClient.invalidateQueries({ queryKey: ['module', id] });
+    },
+    onError: (err: Error) => setGenerationError(err.message),
   });
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -139,6 +159,8 @@ export default function ModuleDetailPage() {
 
   const extractionStatus = mod?.extractionStatus ?? 'NotStarted';
   const isExtractionRunning = extractionStatus === 'Queued' || extractionStatus === 'Processing';
+  const generationStatus = mod?.generationStatus ?? 'NotStarted';
+  const isGenerationRunning = generationStatus === 'Queued' || generationStatus === 'Processing';
   const figureCount = figuresList?.length ?? 0;
   const keptFigureCount = figuresList?.filter(f => f.keep).length ?? 0;
 
@@ -226,6 +248,40 @@ export default function ModuleDetailPage() {
               )}
               {downloadError && (
                 <p className="text-sm text-destructive mt-2">Download failed: {downloadError}</p>
+              )}
+            </div>
+          )}
+
+          {/* Generate Study Materials — only shown once extraction is Ready */}
+          {extractionStatus === 'Ready' && (
+            <div className="mt-10">
+              <h2 className="text-xl font-semibold mb-4">Study Materials</h2>
+
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-sm text-muted-foreground">Status:</span>
+                <Badge variant={generationStatusVariant(generationStatus)}>
+                  {generationStatus}
+                  {isGenerationRunning && (
+                    <span className="ml-1 inline-block h-2 w-2 rounded-full bg-current animate-pulse" />
+                  )}
+                </Badge>
+                {generationStatus === 'Failed' && (
+                  <span className="text-xs text-destructive">Generation failed. Try again.</span>
+                )}
+                {generationStatus === 'Ready' && (
+                  <span className="text-xs text-muted-foreground">Study materials are ready.</span>
+                )}
+              </div>
+
+              <Button
+                onClick={() => runGenerationMutation.mutate()}
+                disabled={isGenerationRunning || runGenerationMutation.isPending}
+              >
+                {runGenerationMutation.isPending ? 'Starting...' : 'Generate Study Materials'}
+              </Button>
+
+              {generationError && (
+                <p className="text-sm text-destructive mt-2">{generationError}</p>
               )}
             </div>
           )}
