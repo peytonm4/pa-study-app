@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-content-generation-04-03-PLAN.md
-last_updated: "2026-04-02T06:22:47.425Z"
+stopped_at: Completed 04-content-generation-04-05-PLAN.md
+last_updated: "2026-04-02T06:26:04.607Z"
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 25
-  completed_plans: 23
+  completed_plans: 24
   percent: 60
 ---
 
@@ -138,6 +138,7 @@ Recent decisions affecting current work:
 - [Phase 04-content-generation]: ContentGenerationJob marks GenerationRun Ready after enqueueing all section jobs — section failures update to Failed independently
 - [Phase 04-content-generation]: IGenerationProvider moved to Api.Providers to avoid circular project dependency (Worker references Api)
 - [Phase 04-content-generation]: SectionGenerationJob uses keyword-aware StubGenerationProvider — QuizPrompt must include 'quiz' keyword
+- [Phase 04-content-generation]: generationStatusVariant placed at module scope alongside extractionStatusVariant; refetchInterval unified to poll both extraction and generation status; Generate Study Materials gated on extractionStatus=Ready
 
 ### Pending Todos
 
@@ -149,6 +150,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-02T06:22:47.420Z
-Stopped at: Completed 04-content-generation-04-03-PLAN.md
+Last session: 2026-04-02T06:26:04.602Z
+Stopped at: Completed 04-content-generation-04-05-PLAN.md
 Resume file: None
