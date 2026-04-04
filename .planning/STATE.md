@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Completed 04-content-generation-04-05-PLAN.md
-last_updated: "2026-04-02T06:26:04.607Z"
+status: completed
+stopped_at: Phase 5 context gathered
+last_updated: "2026-04-04T20:25:06.189Z"
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 25
   completed_plans: 24
-  percent: 60
+  percent: 80
 ---
 
 # Project State
@@ -25,11 +25,11 @@ See: .planning/PROJECT.md (updated 2026-03-16)
 
 ## Current Position
 
-Phase: 3 of 5 (Figures and Lecture Extraction) — **COMPLETE**
-Plan: 7 of 7 — all plans executed and human-verified
-Status: Ready to plan Phase 4
+Phase: 4 of 5 (Content Generation) — **IN PROGRESS**
+Plan: 5 of 6 — plans 04-01 through 04-05 executed; 04-06 (human verification) pending
+Status: Awaiting manual testing before phase can be marked complete
 
-Progress: [██████░░░░] 60%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -150,6 +150,17 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-02T06:26:04.602Z
-Stopped at: Completed 04-content-generation-04-05-PLAN.md
-Resume file: None
+Last session: 2026-04-04T20:25:06.128Z
+Stopped at: Phase 5 context gathered
+Resume file: .planning/phases/05-study-experience/05-CONTEXT.md
+
+### What still needs to happen (04-06)
+- Start full stack (docker compose + API + Worker + frontend)
+- Apply DB migration if not already applied: `dotnet ef database update --project src/Api`
+- Navigate to a module with Ready extraction → confirm "Study Materials" section appears
+- Click "Generate Study Materials" → confirm Queued → Processing → Ready transition
+- Verify DB rows created: `study_guides`, `flashcards`, `quiz_questions` > 0
+- Verify `concept_maps` = 0 (correct for non-algorithmic content)
+- Re-generate → confirm old rows replaced
+- Confirm Generate button hidden on modules without Ready extraction
+- Report "approved" to close 04-06 and trigger phase verification
