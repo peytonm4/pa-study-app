@@ -110,7 +110,14 @@ Plans:
   1. Student can open any section and read its study guide page, flashcards, and concept map in reference mode without being forced into a flow
   2. Student can launch a guided study session for any section that walks through preview, flashcards, and quiz in sequence then marks the section done
   3. After completing cards and a quiz, the section shows progress (cards reviewed count, quiz completed status)
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Wave 0: SectionProgress entity + migration + test stubs + frontend deps (mermaid, shadcn tabs)
+- [ ] 05-02-PLAN.md — Backend: StudyController with 6 endpoints + integration tests (TDD)
+- [ ] 05-03-PLAN.md — Frontend reference mode: study.ts API client + StudyPage + SectionDetailPage + MermaidDiagram
+- [ ] 05-04-PLAN.md — Frontend guided session: SessionPage step machine + ModuleDetailPage Study link
+- [ ] 05-05-PLAN.md — Human verification: end-to-end study experience confirmation
 
 ## Progress
 
@@ -123,4 +130,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Document Ingestion | 6/7 | Complete    | 2026-03-18 |
 | 3. Figures and Lecture Extraction | 5/7 | In Progress|  |
 | 4. Content Generation | 5/6 | In Progress|  |
-| 5. Study Experience | 0/TBD | Not started | - |
+| 5. Study Experience | 0/5 | Not started | - |
